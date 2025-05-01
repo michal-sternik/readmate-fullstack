@@ -1,0 +1,32 @@
+import { Outlet } from "react-router-dom";
+import { Sidebar } from "../Sidebar/Sidebar";
+import { Search } from "../Search/Search";
+import { AuthSection } from "../AuthSection/AuthSection";
+
+export const RootLayout = () => {
+  const typing = false;
+  return (
+    <div className="relative min-h-screen">
+      <div className="absolute inset-0 -z-10 bg-[url('/src/assets/svg/background.svg')] bg-cover bg-no-repeat bg-top min-h-full" />
+
+      <div className="flex flex-col lg:flex-row min-h-screen lg:min-h-0 lg:h-screen w-screen gap-5 lg:gap-0 p-10">
+        <Sidebar />
+
+        <div className="h-full w-full flex flex-col flex-1 gap-10 lg:px-10">
+          <div className="flex flex-row w-full  ">
+            <div className="w-full flex flex-col  gap-5">
+              <p className="text-[#A449FF] flex text-xl font-semibold ">
+                {typing ? "Exploring:" : "Explore:"}
+              </p>
+              <div className="flex flex-col w-full lg:flex-row gap-5 items-center">
+                <Search />
+                <AuthSection />
+              </div>
+            </div>
+          </div>
+          <Outlet />
+        </div>
+      </div>
+    </div>
+  );
+};
