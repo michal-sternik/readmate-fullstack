@@ -60,7 +60,7 @@ export const Search = () => {
         <div
           className={`w-full h-10 flex items-center rounded-4xl ${
             showInputOptions ? "rounded-b-none" : "rounded-4xl"
-          } bg-white/50 backdrop-blur-sm shadow-[0_4px_24px_-6px_rgba(0,0,0,0.75)] transition duration-150`}
+          } bg-white/50  shadow-[0_4px_24px_-6px_rgba(0,0,0,0.75)] transition duration-150`}
         >
           <input
             onChange={handleChange}
@@ -80,7 +80,7 @@ export const Search = () => {
                 ? "opacity-100 shadow-[0_6px_14px_-6px_rgba(0,0,0,0.5)]"
                 : "opacity-0 pointer-events-none"
             } 
-            rounded-b-4xl bg-white/50 backdrop-blur-sm`}
+            rounded-b-4xl bg-white/50 `}
         >
           <div className="h-7/10 w-auto px-5 gap-2 flex flex-row justify-evenly items-center ml-[4%] bg-white opacity-90 border border-[#ABABAB] rounded-4xl">
             <div>only in</div>

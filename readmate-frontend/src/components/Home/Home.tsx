@@ -1,5 +1,5 @@
 import ProgressBar from "../ProgressBar/ProgressBar";
-import { SimpleCallendar } from "../SimpleCallendar/SimpleCallendar";
+import { SimpleCalendar } from "../SimpleCalendar/SimpleCalendar";
 
 const Home = () => {
   return (
@@ -27,8 +27,8 @@ const Home = () => {
         Track your readings:
       </div>
 
-      {/* <Callendar /> */}
-      <SimpleCallendar />
+      {/* <Calendar /> */}
+      <SimpleCalendar />
     </div>
   );
 };

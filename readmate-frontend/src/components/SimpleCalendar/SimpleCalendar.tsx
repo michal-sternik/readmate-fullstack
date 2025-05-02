@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { CallendarNavigation } from "../CallendarNavigation/CallendarNavigation";
+import { CalendarNavigation } from "../CalendarNavigation/CalendarNavigation";
 import { formatDate, getBooksInWeek } from "../../lib/utils";
-import { Book } from "../../types/booktypes";
 import { Button } from "../Button/Button";
+import { mockBooks } from "../../lib/constants";
 
 const colStartClasses: Record<number, string> = {
   1: "col-start-1",
@@ -38,82 +38,7 @@ const colSpanClasses: Record<number, string> = {
   14: "col-span-14",
 };
 
-const mockBooks: Book[] = [
-  {
-    id: 1,
-    title: "Wiosenne przebudzenie",
-    startDate: new Date(2025, 3, 28),
-    endDate: new Date(2025, 3, 30),
-  },
-  {
-    id: 2,
-    title: "Tajemnice Marca",
-    startDate: new Date(2025, 3, 25),
-    endDate: new Date(2025, 3, 28),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-  {
-    id: 3,
-    title: "W poszukiwaniu słońca2",
-    startDate: new Date(2025, 3, 29),
-    endDate: new Date(2025, 4, 2),
-  },
-];
-
-export const SimpleCallendar = () => {
+export const SimpleCalendar = () => {
   const [actualDate, setActualDate] = useState(new Date());
   const [actual7DaysRange, setActual7DaysRange] = useState<
     { date: Date; isCurrentMonth: boolean }[]
@@ -162,7 +87,7 @@ export const SimpleCallendar = () => {
       <div className="flex w-full flex-row justify-between items-center lg:px-5">
         <div className="flex  flex-row items-center gap-3 lg:gap-10 ">
           {actual7DaysRange.length === 7 && (
-            <CallendarNavigation
+            <CalendarNavigation
               handleDateChange={handleDateChange}
               dateRange={[actual7DaysRange[0].date, actual7DaysRange[6].date]}
             />
@@ -188,8 +113,8 @@ export const SimpleCallendar = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-7 border rounded-xl divide-x-1 relative z-1 min-h-[150px] md:min-h-[220px] lg:h-full overflow-hidden">
-          <div className=" custom-scroll overflow-y-auto px-1 max-h-[70%] md:max-h-7/8  grid grid-cols-14 gap-px bg-transparent absolute w-full top-5 text-[8px] md:text-xs">
+        <div className="h-full grid grid-cols-7 border rounded-4xl overflow-y-hidden  divide-x-1 relative  ">
+          <div className="custom-scroll px-1 max-h-[100%] p-5 gap-px overflow-y-auto grid grid-cols-14 bg-transparent absolute w-full  text-[8px] md:text-xs">
             {books.map(
               (book, idx) =>
                 book && (
@@ -199,20 +124,21 @@ export const SimpleCallendar = () => {
                       colSpanClasses[book.span!]
                     } ${
                       book.color
-                    } rounded-4xl text-xs lg:text-lg text-center text-nowrap overflow-auto`}
+                    } rounded-4xl text-sm lg:text-lg text-center text-nowrap custom-scroll overflow-auto`}
                   >
                     {book?.title}
                   </div>
                 )
             )}
           </div>
-
           {actual7DaysRange.map((day, dayIdx) => (
             <div
               key={`day-${dayIdx}`}
-              className={`flex flex-col h-full ${
-                day.isCurrentMonth ? "" : "bg-gray-100"
-              } ${dayIdx === 6 ? "rounded-r-xl" : ""}`}
+              className={`min-h-30 md:min-h-40 flex-1 flex flex-col ${
+                day.isCurrentMonth ? "" : "text-gray-400"
+              } 
+                        
+                        ${dayIdx === 6 && !day.isCurrentMonth ? "" : ""}`}
             ></div>
           ))}
         </div>
