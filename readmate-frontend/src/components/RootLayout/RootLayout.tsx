@@ -5,9 +5,14 @@ import { AuthSection } from "../AuthSection/AuthSection";
 
 export const RootLayout = () => {
   const typing = false;
+  const darkMode = false;
   return (
     <div className="relative min-h-screen">
-      <div className="absolute inset-0 -z-10 bg-[url('/src/assets/svg/background.svg')] bg-cover bg-no-repeat bg-top min-h-full" />
+      <div
+        className={`${
+          darkMode ? "bg-black" : ""
+        } absolute inset-0 -z-10 bg-[url('/src/assets/svg/background.svg')] bg-cover bg-no-repeat bg-top min-h-full"`}
+      />
 
       <div className="flex flex-col lg:flex-row min-h-screen lg:min-h-0 lg:h-screen w-screen gap-5 lg:gap-0 p-10">
         <Sidebar />

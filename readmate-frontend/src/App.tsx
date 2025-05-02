@@ -11,6 +11,7 @@ import {
 // import Explore from "./components/Explore/Explore";
 import { RootLayout } from "./components/RootLayout/RootLayout";
 import Home from "./components/Home/Home";
+import { Calendar } from "./components/Calendar/Calendar";
 
 function App() {
   const router = createBrowserRouter(
@@ -20,7 +21,7 @@ function App() {
         {/* <Route path="explore" element={<Explore />} /> */}
         {/* <Route path="sign-in" element={<SignIn />} />
         <Route path="log-in" element={<LogIn />} /> */}
-        {/* <Route path="calendar" element={<Calendar />} /> */}
+        <Route path="calendar" element={<Calendar />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Route>
     )
