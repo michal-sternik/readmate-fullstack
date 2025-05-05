@@ -1,3 +1,4 @@
+import Skeleton from "react-loading-skeleton";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import { SimpleCalendar } from "../SimpleCalendar/SimpleCalendar";
 
@@ -27,7 +28,6 @@ const Home = () => {
         Track your readings:
       </div>
 
-      {/* <Calendar /> */}
       <SimpleCalendar />
     </>
   );

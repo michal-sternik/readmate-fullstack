@@ -14,6 +14,8 @@ import Home from "./components/Home/Home";
 import { Calendar } from "./components/Calendar/Calendar";
 import { Explore } from "./components/Explore/Explore";
 import { SingleBookDetails } from "./components/SingleBookDetails/SingleBookDetails";
+import { SkeletonTheme } from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 function App() {
   const router = createBrowserRouter(
@@ -31,10 +33,10 @@ function App() {
   );
 
   return (
-    // <SkeletonTheme baseColor="#BBBBBB" highlightColor="#CCCCCC">
-    //   <Toaster position="bottom-left" />
-    <RouterProvider router={router} />
-    // </SkeletonTheme>
+    <SkeletonTheme baseColor="#BBBBBB" highlightColor="#CCCCCC">
+      {/* <Toaster position="bottom-left" /> */}
+      <RouterProvider router={router} />
+    </SkeletonTheme>
   );
 }
 
