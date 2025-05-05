@@ -29,7 +29,9 @@ export const RootLayout = () => {
               </div>
             </div>
           </div>
-          <Outlet />
+          <div className="overflow-hiddenp-5 gap-3 flex flex-col text-black bg-white/50 lg:backdrop-blur-sm w-full h-full rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

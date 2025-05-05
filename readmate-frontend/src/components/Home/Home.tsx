@@ -1,9 +1,10 @@
+import Skeleton from "react-loading-skeleton";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import { SimpleCalendar } from "../SimpleCalendar/SimpleCalendar";
 
 const Home = () => {
   return (
-    <div className="p-5 gap-3 bg-white/60 shadow-[0px_1px_14px_0px_rgba(0,0,0,0.3)] rounded-4xl h-full w-full flex flex-col ">
+    <>
       <div className="px-2 font-normal text-[25px]  text-[#A449FF] flex items-center">
         Your activity:
       </div>
@@ -27,9 +28,8 @@ const Home = () => {
         Track your readings:
       </div>
 
-      {/* <Calendar /> */}
       <SimpleCalendar />
-    </div>
+    </>
   );
 };
 
