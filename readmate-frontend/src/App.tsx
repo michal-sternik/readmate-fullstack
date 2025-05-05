@@ -12,13 +12,16 @@ import {
 import { RootLayout } from "./components/RootLayout/RootLayout";
 import Home from "./components/Home/Home";
 import { Calendar } from "./components/Calendar/Calendar";
+import { Explore } from "./components/Explore/Explore";
+import { SingleBookDetails } from "./components/SingleBookDetails/SingleBookDetails";
 
 function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
         <Route index element={<Home />} />
-        {/* <Route path="explore" element={<Explore />} /> */}
+        <Route path="explore" element={<Explore />} />
+        <Route path="addBook" element={<SingleBookDetails />} />
         {/* <Route path="sign-in" element={<SignIn />} />
         <Route path="log-in" element={<LogIn />} /> */}
         <Route path="calendar" element={<Calendar />} />

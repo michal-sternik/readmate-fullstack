@@ -147,75 +147,73 @@ export const Calendar = () => {
 
   return (
     <>
-      <div className="flex flex-col text-black bg-white/50 lg:backdrop-blur-sm w-full h-full rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
-        <div className="flex w-full p-5 h-20 flex-row justify-between items-center lg:px-5">
-          <div className="flex  flex-row items-center gap-3 lg:gap-10 ">
-            <CalendarNavigation
-              handleDateChange={handleDateChange}
-              date={new Date(currentYear, currentMonth, 1)}
-            />
+      <div className="flex w-full p-5 h-20 flex-row justify-between items-center lg:px-5">
+        <div className="flex  flex-row items-center gap-3 lg:gap-10 ">
+          <CalendarNavigation
+            handleDateChange={handleDateChange}
+            date={new Date(currentYear, currentMonth, 1)}
+          />
 
-            <span className="font-extrabold text-sm lg:text-3xl text-[#A449FF]">
-              {actualDateString}
-            </span>
-          </div>
-
-          <Button className="px-1 py-1! ml-1">Shrink</Button>
+          <span className="font-extrabold text-sm lg:text-3xl text-[#A449FF]">
+            {actualDateString}
+          </span>
         </div>
-        <div className="flex-1 p-5 lg:p-10 rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)] flex flex-col">
-          <div className="flex flex-col border rounded-xl flex-1">
-            <div className="grid grid-cols-7">
-              {["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"].map((day) => (
-                <div key={day} className="text-center font-bold py-2 ">
-                  {day}
-                </div>
-              ))}
-            </div>
-            {/* <hr /> */}
 
-            {weeks.map((week, weekIdx) => {
-              const books = getBooksInWeek(week, mockBooks);
-              return (
-                <div key={weekIdx} className="relative flex-1">
-                  <hr className="relative" />
+        <Button className="px-1 py-1! ml-1">Shrink</Button>
+      </div>
+      <div className="flex-1 p-5 lg:p-10 rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)] flex flex-col">
+        <div className="flex flex-col border rounded-xl flex-1">
+          <div className="grid grid-cols-7">
+            {["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Ndz"].map((day) => (
+              <div key={day} className="text-center font-bold py-2 ">
+                {day}
+              </div>
+            ))}
+          </div>
+          {/* <hr /> */}
 
-                  <div className="h-full grid grid-cols-7 overflow-y-hidden  divide-x-1 relative  ">
-                    <div className="custom-scroll px-1 max-h-[100%] pt-5 gap-px overflow-y-auto grid grid-cols-14 bg-transparent absolute w-full  text-[8px] md:text-xs">
-                      {books.map(
-                        (book, idx) =>
-                          book && (
-                            <div
-                              key={idx}
-                              className={`${colStartClasses[book.start!]} ${
-                                colSpanClasses[book.span!]
-                              } ${
-                                book.color
-                              } rounded text-center text-xs sm:text-sm lg:text-lg rounded-xl px-1 text-nowrap overflow-hidden custom-scroll overflow-x-auto`}
-                            >
-                              {book?.title}
-                            </div>
-                          )
-                      )}
-                    </div>
-                    {week.map((day, dayIdx) => (
-                      <div
-                        key={`day-${dayIdx}`}
-                        className={`min-h-10 md:min-h-20 flex-1 flex flex-col ${
-                          day.isCurrentMonth ? "" : "text-gray-400"
-                        } 
+          {weeks.map((week, weekIdx) => {
+            const books = getBooksInWeek(week, mockBooks);
+            return (
+              <div key={weekIdx} className="relative flex-1">
+                <hr className="relative" />
+
+                <div className="h-full grid grid-cols-7 overflow-y-hidden  divide-x-1 relative  ">
+                  <div className="custom-scroll px-1 max-h-[100%] pt-5 gap-px overflow-y-auto grid grid-cols-14 bg-transparent absolute w-full  text-[8px] md:text-xs">
+                    {books.map(
+                      (book, idx) =>
+                        book && (
+                          <div
+                            key={idx}
+                            className={`${colStartClasses[book.start!]} ${
+                              colSpanClasses[book.span!]
+                            } ${
+                              book.color
+                            } rounded text-center text-xs sm:text-sm lg:text-lg rounded-xl px-1 text-nowrap overflow-hidden custom-scroll overflow-x-auto`}
+                          >
+                            {book?.title}
+                          </div>
+                        )
+                    )}
+                  </div>
+                  {week.map((day, dayIdx) => (
+                    <div
+                      key={`day-${dayIdx}`}
+                      className={`min-h-10 md:min-h-20 flex-1 flex flex-col ${
+                        day.isCurrentMonth ? "" : "text-gray-400"
+                      } 
                         
                         ${dayIdx === 6 && !day.isCurrentMonth ? "" : ""}`}
-                      >
-                        <div className="text-xs p-1">{day.date.getDate()}</div>
-                      </div>
-                    ))}
-                  </div>
+                    >
+                      <div className="text-xs p-1">{day.date.getDate()}</div>
+                    </div>
+                  ))}
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
 
-            {/* <hr /> */}
-          </div>
+          {/* <hr /> */}
         </div>
       </div>
     </>

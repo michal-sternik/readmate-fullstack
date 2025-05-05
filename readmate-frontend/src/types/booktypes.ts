@@ -10,3 +10,17 @@ export interface CallendarBook extends Book {
   start: number;
   span: number;
 }
+
+export type ExploreBook = {
+  id: string;
+  volumeInfo: {
+    title: string;
+    authors?: string[];
+    publishedDate?: string;
+    infoLink?: string;
+    categories?: string[];
+    imageLinks?: {
+      thumbnail?: string;
+    };
+  };
+};
