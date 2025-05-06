@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Flag from "react-world-flags";
+import DoneIcon from "@mui/icons-material/Done";
 // import MUIToggler from "../MUIToggler/MUIToggler"
 // import { AuthContext } from "../../context/AuthProvider"
 // import { ReactComponent as Icon } from '../../static/svg/logout.svg'
@@ -8,7 +9,8 @@ import Flag from "react-world-flags";
 export const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
   // const [startIndex, setStartIndex] = useState(0);
-  // const [togglerChecked, setTogglerChecked] = useState(false);
+  const [languageTogglerChecked, setLanguageTogglerChecked] =
+    useState<boolean>(false);
   const [showInputOptions, setShowInputOptions] = useState(false);
 
   const navigate = useNavigate();
@@ -82,7 +84,12 @@ export const Search = () => {
             } 
             rounded-b-4xl bg-white/50 `}
         >
-          <div className="h-7/10 w-auto px-5 gap-2 flex flex-row justify-evenly items-center ml-[4%] bg-white opacity-90 border border-[#ABABAB] rounded-4xl">
+          <button
+            onClick={() => setLanguageTogglerChecked(!languageTogglerChecked)}
+            className={`transition-all duration-300 cursor-pointer h-7/10 w-auto px-5 gap-2 flex flex-row justify-evenly items-center ml-[4%] ${
+              languageTogglerChecked ? "bg-purple-500/50" : "bg-white/50"
+            } opacity-90 border border-[#ABABAB] rounded-4xl`}
+          >
             <div>only in</div>
             <Flag
               code="pl"
@@ -91,7 +98,14 @@ export const Search = () => {
                 filter: "drop-shadow(0px 0px 3px #000000)",
               }}
             />
-          </div>
+            <div
+              className={`transition-all duration-300 ${
+                languageTogglerChecked ? "opacity-100 w-auto" : "opacity-0 w-0"
+              } overflow-hidden flex items-center`}
+            >
+              <DoneIcon />
+            </div>
+          </button>
         </div>
       </div>
     </div>
