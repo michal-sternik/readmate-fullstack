@@ -14,7 +14,7 @@ export const RootLayout = () => {
         } absolute inset-0 -z-10 bg-[url('/src/assets/svg/background.svg')] bg-cover bg-no-repeat bg-top min-h-full"`}
       />
 
-      <div className="flex flex-col lg:flex-row min-h-screen lg:min-h-0 lg:h-screen w-screen gap-5 lg:gap-0 p-10">
+      <div className="flex flex-col lg:flex-row min-h-screen lg:min-h-0 lg:h-screen w-screen gap-5 lg:gap-0 p-5 lg:p-10">
         <Sidebar />
 
         <div className="h-full w-full flex flex-col flex-1 gap-10 lg:px-10">

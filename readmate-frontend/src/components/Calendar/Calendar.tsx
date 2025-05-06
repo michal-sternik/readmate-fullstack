@@ -112,8 +112,6 @@ export const Calendar = () => {
     return days;
   };
 
-  //jeszcze wziac pod uwage ze book.endDate moze byc null
-
   const splitIntoWeeks = (days: { date: Date; isCurrentMonth: boolean }[]) => {
     const weeks = [];
     for (let i = 0; i < days.length; i += 7) {

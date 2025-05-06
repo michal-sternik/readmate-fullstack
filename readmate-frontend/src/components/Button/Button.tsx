@@ -27,7 +27,7 @@ export const Button = ({
     hoverColor,
     activeColor,
     "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-400",
-    fullWidth ? "w-full" : "w-auto",
+    fullWidth ? "w-full" : "",
     className,
   ].join(" ");
 
