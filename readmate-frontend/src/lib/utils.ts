@@ -6,15 +6,15 @@ export const getBooksInWeek = (
   books: Book[]
 ): CallendarBook[] => {
   if (!week || week.length === 0) return [];
-  // debugger;
+
   const firstDayOfTheWeek = week[0].date;
   const lastDayOfTheWeek = week[week.length - 1].date;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const booksInWeek: Omit<CallendarBook, "color">[] = books.flatMap((book) => {
-    //najpierw sprawdzamy najczestszy przypadek czyli czy ksiazka w ogole jest czytana w danym tygodniu
     const effectiveEndDate = book.endDate ? book.endDate : today;
+    //najpierw sprawdzamy najczestszy przypadek czyli czy ksiazka w ogole jest czytana w danym tygodniu
     if (
       (book.startDate.getTime() < firstDayOfTheWeek.getTime() &&
         effectiveEndDate.getTime() < firstDayOfTheWeek.getTime()) ||

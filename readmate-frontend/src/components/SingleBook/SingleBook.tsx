@@ -13,27 +13,18 @@ type SingleBookProps = {
 
 export const SingleBook = ({ book }: SingleBookProps) => {
   const navigate = useNavigate();
-  const thumbnailSrc =
-    typeof book.volumeInfo.imageLinks === "undefined"
-      ? defaultImage
-      : book.volumeInfo.imageLinks.thumbnail ?? defaultImage;
-
-  const bookCategory =
-    typeof book.volumeInfo.categories === "undefined"
-      ? "Other"
-      : book.volumeInfo.categories.join(", ");
 
   return (
     <div className="w-full overflow-hidden xl:w-3/10 h-3/10 bg-white opacity-90 shadow-lg rounded-4xl flex flex-row">
       <a
         className="flex min-w-20 max-w-3/10 "
-        href={book.volumeInfo.infoLink}
+        href={book.link}
         target="_blank"
         rel="noopener noreferrer"
       >
         <img
-          src={thumbnailSrc}
-          alt={`${book.volumeInfo.title} cover`}
+          src={book.imageLink}
+          alt={`${book.title} cover`}
           className="h-full w-full rounded-4xl transition duration-300 object-cover shadow-md hover:scale-105"
         />
       </a>
@@ -43,19 +34,21 @@ export const SingleBook = ({ book }: SingleBookProps) => {
           state={{ book: book }}
           className="max-h-15 cursor-pointer font-medium xl:text:md 2xl:text-lg overflow-auto scrollbar-hide"
         >
-          {book.volumeInfo.title}
+          {book.title}
         </NavLink>
         <p className="font-extralight text-xs ">
-          {book.volumeInfo.authors?.join(", ") || "Unknown Author"}
+          {book.authors?.join(", ") || "Unknown Author"}
         </p>
         <p className="font-light text-xs ">
-          {book.volumeInfo.publishedDate || "Unknown Date"}
+          {book.publishedDate || "Unknown Date"}
         </p>
         <div className="w-full flex flex-row justify-between items-center ">
           <div className="flex w-3/4 items-center">
             <div className="bg-[#E1E1E1] border border-black rounded-4xl px-2 py-1 text-sm max-w-full">
               <div className="overflow-auto scrollbar-hide whitespace-nowrap">
-                <span className="inline-block">{bookCategory}</span>
+                <span className="inline-block">
+                  {book.categories?.join(", ")}
+                </span>
               </div>
             </div>
           </div>

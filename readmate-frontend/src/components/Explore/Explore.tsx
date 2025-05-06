@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { exploreMockBooks } from "../../lib/constants";
+import defaultImage from "../../assets/images/defaultimgcover.jpg";
 
 import { BookList } from "../BookList/BookList";
 import { Pagination } from "../Pagination/Pagination";
@@ -10,14 +11,26 @@ const books = {
   items: exploreMockBooks.items.map(
     (book): ExploreBook => ({
       id: book.id,
-      volumeInfo: {
-        title: book.volumeInfo.title,
-        authors: book.volumeInfo.authors,
-        publishedDate: book.volumeInfo.publishedDate,
-        infoLink: book.volumeInfo.infoLink,
-        categories: book.volumeInfo.categories,
-        imageLinks: book.volumeInfo.imageLinks,
-      },
+
+      title: book.volumeInfo.title,
+      authors:
+        typeof book.volumeInfo.authors === "undefined"
+          ? book.volumeInfo.publisher
+            ? [book.volumeInfo.publisher]
+            : ["Unknown Author"]
+          : book.volumeInfo.authors,
+      publishedDate: book.volumeInfo.publishedDate,
+      link: book.volumeInfo.infoLink,
+      categories:
+        typeof book.volumeInfo.categories === "undefined"
+          ? ["Other"]
+          : book.volumeInfo.categories,
+      imageLink:
+        typeof book.volumeInfo.imageLinks === "undefined"
+          ? defaultImage
+          : book.volumeInfo.imageLinks.thumbnail ?? defaultImage,
+      description: book.volumeInfo.description,
+      pageCount: book.volumeInfo.pageCount,
     })
   ),
 };

@@ -1,4 +1,3 @@
-import Skeleton from "react-loading-skeleton";
 import ProgressBar from "../ProgressBar/ProgressBar";
 import { SimpleCalendar } from "../SimpleCalendar/SimpleCalendar";
 

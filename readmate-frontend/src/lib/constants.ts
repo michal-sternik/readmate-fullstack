@@ -88,7 +88,7 @@ export const exploreMockBooks = {
       selfLink: "https://www.googleapis.com/books/v1/volumes/dQHSTqR7ijUC",
       volumeInfo: {
         title: "Manufacturing Execution System - MES",
-        authors: ["Jürgen Kletti"],
+        authors: ["Jürgen Kletti, Testowy"],
         publisher: "Springer Science & Business Media",
         publishedDate: "2007-05-01",
         description:
