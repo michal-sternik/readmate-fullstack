@@ -20,6 +20,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "../Button/Button";
 import { Book } from "../../types/booktypes";
 import React, { useEffect, useState } from "react";
+import { toDateOrUndefined } from "../../lib/utils";
 
 type FormValues = {
   title: string;
@@ -43,105 +44,6 @@ const initialFormValues: FormValues = {
   categories: [],
 };
 
-const AuthorsInput = React.memo(({ resetKey }: { resetKey: number }) => {
-  const { control, setValue } = useFormContext<FormValues>();
-  const authors = useWatch({ control, name: "authors" });
-  const [input, setInput] = useState("");
-
-  useEffect(() => {
-    setInput("");
-  }, [resetKey]);
-
-  const add = () => {
-    const val = input.trim();
-    if (val && !authors.includes(val)) {
-      setValue("authors", [...authors, val]);
-      setInput("");
-    }
-  };
-
-  const remove = (val: string) => {
-    setValue(
-      "authors",
-      authors.filter((a) => a !== val)
-    );
-  };
-
-  return (
-    <div className="flex flex-col w-1/2 gap-2">
-      <div className="flex items-center">
-        <TextField
-          label="Add Author"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
-          className="w-full"
-        />
-        <IconButton onClick={add} color="primary">
-          <AddIcon />
-        </IconButton>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {authors.map((a) => (
-          <Chip
-            key={a}
-            label={a}
-            onDelete={() => remove(a)}
-            color="secondary"
-          />
-        ))}
-      </div>
-    </div>
-  );
-});
-
-const CategoriesInput = React.memo(({ resetKey }: { resetKey: number }) => {
-  const { control, setValue } = useFormContext<FormValues>();
-  const categories = useWatch({ control, name: "categories" });
-  const [input, setInput] = useState("");
-
-  useEffect(() => {
-    setInput("");
-  }, [resetKey]);
-
-  const add = () => {
-    const val = input.trim();
-    if (val && !categories.includes(val)) {
-      setValue("categories", [...categories, val]);
-      setInput("");
-    }
-  };
-
-  const remove = (val: string) => {
-    setValue(
-      "categories",
-      categories.filter((c) => c !== val)
-    );
-  };
-
-  return (
-    <div className="flex flex-col w-1/2 gap-2">
-      <div className="flex items-center">
-        <TextField
-          label="Add Category"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
-          className="w-full"
-        />
-        <IconButton onClick={add} color="primary">
-          <AddIcon />
-        </IconButton>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {categories.map((c) => (
-          <Chip key={c} label={c} onDelete={() => remove(c)} color="primary" />
-        ))}
-      </div>
-    </div>
-  );
-});
-
 export const AddCustomBook = () => {
   const form = useForm<FormValues>({
     defaultValues: {
@@ -162,20 +64,14 @@ export const AddCustomBook = () => {
   const [formResetKey, setFormResetKey] = useState(0);
 
   const onSubmit = (data: FormValues) => {
-    console.log(data);
+    console.log("test");
     if (!data.startDate) return;
 
     const finalData: Omit<Book, "id"> = {
       ...data,
-      publishedDate: data.publishedDate
-        ? new Date(dayjs(data.publishedDate).format("YYYY-MM-DD"))
-        : undefined,
-      startDate: new Date(data.startDate.format("YYYY-MM-DD")),
-      endDate: currentlyReading
-        ? undefined
-        : data.endDate
-        ? new Date(data.endDate.format("YYYY-MM-DD"))
-        : undefined,
+      publishedDate: toDateOrUndefined(data.publishedDate),
+      startDate: toDateOrUndefined(data.startDate)!,
+      endDate: currentlyReading ? undefined : toDateOrUndefined(data.endDate),
       link: "",
       imageLink: "",
     };
@@ -187,15 +83,14 @@ export const AddCustomBook = () => {
     reset(initialFormValues);
 
     setCurrentlyReading(false);
+    //wymusza zmiane referencji funkcji przekazywanej do TagsInput
+    //zeby zresetowac inputy
     setFormResetKey((prev) => prev + 1);
   };
 
   return (
     <FormProvider {...form}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col xl:flex-row gap-10 lg:gap-5 h-full w-full"
-      >
+      <div className="flex flex-col xl:flex-row gap-10 lg:gap-5 h-full w-full">
         <div className="flex flex-col w-full gap-4 overflow-auto scrollbar-hide">
           <div className="text-2xl font-extrabold text-[#A449FF]">
             Add a Custom Book
@@ -207,11 +102,22 @@ export const AddCustomBook = () => {
             fullWidth
             error={!!errors.title}
             helperText={errors.title?.message}
+            required
           />
 
           <div className="flex flex-row gap-4 w-full">
-            <AuthorsInput resetKey={formResetKey} />
-            <CategoriesInput resetKey={formResetKey} />
+            <TagsInput
+              resetKey={formResetKey}
+              name="authors"
+              label="Add Author"
+              chipColor="secondary"
+            />
+            <TagsInput
+              resetKey={formResetKey}
+              name="categories"
+              label="Add Category"
+              chipColor="primary"
+            />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
@@ -251,7 +157,7 @@ export const AddCustomBook = () => {
           <TextField
             label="Description"
             multiline
-            rows={4}
+            rows={3}
             {...register("description")}
             fullWidth
           />
@@ -288,7 +194,20 @@ export const AddCustomBook = () => {
               <Controller
                 name="endDate"
                 control={control}
-                render={({ field }) => (
+                rules={{
+                  validate: (endDate) => {
+                    const startDate = form.getValues("startDate");
+                    if (
+                      endDate &&
+                      startDate &&
+                      dayjs(endDate).isBefore(dayjs(startDate))
+                    ) {
+                      return "End date cannot be earlier than start date.";
+                    }
+                    return true;
+                  },
+                }}
+                render={({ field, fieldState }) => (
                   <DatePicker
                     {...field}
                     label="End Date"
@@ -296,7 +215,13 @@ export const AddCustomBook = () => {
                     onChange={(date) => field.onChange(date)}
                     disabled={currentlyReading}
                     disableFuture
-                    slotProps={{ field: { clearable: true } }}
+                    slotProps={{
+                      textField: {
+                        error: !!fieldState.error,
+                        helperText: fieldState.error?.message,
+                      },
+                      field: { clearable: true },
+                    }}
                     className="w-full"
                   />
                 )}
@@ -321,16 +246,77 @@ export const AddCustomBook = () => {
             />
           </LocalizationProvider>
 
-          <div className="flex gap-2 mb-5">
+          <div className="flex gap-2 mb-5 p-1">
             <Button onClick={handleReset} className="w-1/2">
               RESET
             </Button>
-            <Button type="submit" className="w-1/2">
+            <Button onClick={handleSubmit(onSubmit)} className="w-1/2">
               SUBMIT
             </Button>
           </div>
         </div>
-      </form>
+      </div>
     </FormProvider>
   );
 };
+const TagsInput = React.memo(
+  ({
+    resetKey,
+    name,
+    label,
+    chipColor,
+  }: {
+    resetKey: number;
+    name: "authors" | "categories";
+    label: string;
+    chipColor: "primary" | "secondary";
+  }) => {
+    const { control, setValue } = useFormContext<FormValues>();
+    const values = useWatch({ control, name }) as string[];
+    const [input, setInput] = useState("");
+
+    useEffect(() => setInput(""), [resetKey]);
+
+    const add = () => {
+      const val = input.trim();
+      if (val && !values.includes(val)) {
+        setValue(name, [...values, val]);
+        setInput("");
+      }
+    };
+
+    const remove = (val: string) => {
+      setValue(
+        name,
+        values.filter((v) => v !== val)
+      );
+    };
+
+    return (
+      <div className="flex flex-col w-1/2 gap-2">
+        <div className="flex items-center">
+          <TextField
+            label={label}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), add())}
+            className="w-full"
+          />
+          <IconButton onClick={add} color="primary">
+            <AddIcon />
+          </IconButton>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {values.map((v) => (
+            <Chip
+              key={v}
+              label={v}
+              onDelete={() => remove(v)}
+              color={chipColor}
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+);

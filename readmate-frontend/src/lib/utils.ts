@@ -1,3 +1,4 @@
+import dayjs, { Dayjs } from "dayjs";
 import { Book, CallendarBook } from "../types/booktypes";
 import { WEEKSPLIT, WEEKDURATION } from "./constants";
 
@@ -112,4 +113,10 @@ export const formatDate = (date: Date) => {
   const day = date.getDate();
   const month = date.getMonth() + 1;
   return `${day < 10 ? "0" : ""}${day}.${month < 10 ? "0" : ""}${month}`;
+};
+
+export const toDateOrUndefined = (
+  day: Dayjs | null | undefined
+): Date | undefined => {
+  return day ? new Date(dayjs(day).format("YYYY-MM-DD")) : undefined;
 };
