@@ -17,7 +17,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   }, [actualPage]);
 
   return (
-    <div className="flex flex-row w-full h-1/2 items-center justify-center lg:justify-end">
+    <div className="flex flex-row grow h-1/2 items-center justify-center lg:justify-end">
       <NavIcon
         className={`hover:scale-[1.1] h-full cursor-pointer transition duration-200 ${
           disablePrevButton ? "opacity-70 pointer-events-none" : "opacity-100"

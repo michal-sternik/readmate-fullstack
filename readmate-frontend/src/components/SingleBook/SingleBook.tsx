@@ -1,5 +1,3 @@
-import React from "react";
-import defaultImage from "../../assets/images/defaultimgcover.jpg";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Tooltip, IconButton } from "@mui/material";
 import Icon from "../../assets/svg/addBook.svg?react";
@@ -40,7 +38,9 @@ export const SingleBook = ({ book }: SingleBookProps) => {
           {book.authors?.join(", ") || "Unknown Author"}
         </p>
         <p className="font-light text-xs ">
-          {book.publishedDate || "Unknown Date"}
+          {book.publishedDate instanceof Date
+            ? book.publishedDate.toLocaleDateString()
+            : book.publishedDate || "Unknown Date"}
         </p>
         <div className="w-full flex flex-row justify-between items-center ">
           <div className="flex w-3/4 items-center">

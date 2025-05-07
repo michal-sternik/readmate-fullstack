@@ -2,7 +2,7 @@ export type ExploreBook = {
   id: string;
   title: string;
   authors?: string[];
-  publishedDate?: string;
+  publishedDate?: Date;
   link?: string;
   categories?: string[];
   pageCount?: number;
