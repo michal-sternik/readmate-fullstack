@@ -4,16 +4,6 @@ import { mockBooks } from "../../lib/constants";
 import { CalendarNavigation } from "../CalendarNavigation/CalendarNavigation";
 import { Button } from "../Button/Button";
 
-export type Book = {
-  id: number;
-  title: string;
-  startDate: Date;
-  endDate?: Date;
-  color: string;
-  start?: number;
-  span?: number;
-};
-
 const colStartClasses: Record<number, string> = {
   1: "col-start-1",
   2: "col-start-2",
@@ -51,24 +41,6 @@ const colSpanClasses: Record<number, string> = {
 export const Calendar = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-
-  const handleNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0);
-      setCurrentYear(currentYear + 1);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
-  };
-
-  const handlePrevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11);
-      setCurrentYear(currentYear - 1);
-    } else {
-      setCurrentMonth(currentMonth - 1);
-    }
-  };
 
   const generateCalendarDays = () => {
     const days = [];
