@@ -28,7 +28,7 @@ export const SingleBook = ({ book }: SingleBookProps) => {
       </a>
       <div className="flex flex-col grow w-full overflow-auto scrollbar-hide justify-around box-border p-3 ">
         <NavLink
-          to="/addBook"
+          to="/manageBook"
           state={{ book: book }}
           className="max-h-15 cursor-pointer font-medium xl:text:md 2xl:text-lg overflow-auto scrollbar-hide"
         >
@@ -56,7 +56,7 @@ export const SingleBook = ({ book }: SingleBookProps) => {
           <Tooltip title="Add this book!">
             <IconButton
               onClick={() => {
-                navigate("/addBook", { state: { book: book } });
+                navigate("/manageBook", { state: { book: book } });
               }}
               size="small"
             >

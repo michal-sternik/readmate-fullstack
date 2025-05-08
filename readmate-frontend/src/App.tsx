@@ -17,6 +17,7 @@ import { SingleBookDetails } from "./components/SingleBookDetails/SingleBookDeta
 import { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { AddCustomBook } from "./components/AddCustomBook/AddCustomBook";
+import { UserProfile } from "./components/UserProfile/UserProfile";
 
 function App() {
   const router = createBrowserRouter(
@@ -24,8 +25,9 @@ function App() {
       <Route path="/" element={<RootLayout />}>
         <Route index element={<Home />} />
         <Route path="explore" element={<Explore />} />
-        <Route path="addBook" element={<SingleBookDetails />} />
+        <Route path="manageBook" element={<SingleBookDetails />} />
         <Route path="addCustomBook" element={<AddCustomBook />} />
+        <Route path="profile" element={<UserProfile />} />
         {/* <Route path="sign-in" element={<SignIn />} />
         <Route path="log-in" element={<LogIn />} /> */}
         <Route path="calendar" element={<Calendar />} />

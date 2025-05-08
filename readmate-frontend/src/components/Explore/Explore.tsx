@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { exploreMockBooks } from "../../lib/constants";
 import defaultImage from "../../assets/images/defaultimgcover.jpg";
@@ -49,14 +49,14 @@ export const Explore = () => {
     if (books.items.length !== 0) {
       setShowPagination(true);
     }
-  }, [books.items.length]);
+  }, []);
 
   //   const toggleFormVisibility = () => {
   //     setFormVisibility((prev) => (prev === 'hidden' ? 'visible' : 'hidden'))
   //   }
 
   return (
-    <div className="w-full h-full flex flex-col ">
+    <div className="w-full h-full flex flex-col gap-5 ">
       <BookList
         bookList={books.items}
         // typing={typing}

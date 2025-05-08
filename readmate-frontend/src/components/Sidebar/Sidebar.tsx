@@ -18,7 +18,7 @@ const sidebarNavItems = [
   },
   {
     display: "User",
-    to: "/user",
+    to: "/profile",
   },
 ];
 
