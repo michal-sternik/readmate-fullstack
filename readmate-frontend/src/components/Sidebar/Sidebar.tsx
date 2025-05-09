@@ -1,7 +1,14 @@
 /// <reference types="vite-plugin-svgr/client" />
 import Logo from "../../assets/svg/logo.svg?react";
 import { Button } from "../Button/Button";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
+import Face2RoundedIcon from "@mui/icons-material/Face2Rounded";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
+import { Avatar } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
 
 const sidebarNavItems = [
   {
@@ -22,7 +29,18 @@ const sidebarNavItems = [
   },
 ];
 
+const exampleUser = {
+  id: 1,
+  username: "test",
+  email: "test@test.com",
+  gender: "male",
+  createdAt: "2023-10-01T12:00:00Z",
+  age: 25,
+};
+// const exampleUser = undefined;
+
 export const Sidebar = () => {
+  const navigate = useNavigate();
   return (
     <div className="h-full w-full lg:min-w-[250px] lg:max-w-[400px] flex justify-center items-center ">
       <div className="w-full h-full flex gap-5 lg:gap-0 flex-col items-center bg-white/10 shadow-[0_0_40px_rgba(0,0,0,0.3)] lg:backdrop-blur-sm rounded-4xl border border-white/20">
@@ -33,7 +51,7 @@ export const Sidebar = () => {
             </a>
           </div>
 
-          <div className="w-9/10 lg:w-8/10 gap-2 p-2 lg:p-10 lg:gap-10 flex flex-row lg:flex-col overflow-x-auto items-center justify-evenly  bg-white/90 shadow-[0_0_40px_rgba(0,0,0,0.2)]  rounded-4xl  ">
+          <div className="w-9/10 lg:w-8/10 gap-2 p-2 lg:p-10 lg:gap-10 flex flex-row lg:flex-col overflow-x-auto scrollbar-hide items-center justify-evenly  bg-white/90 shadow-[0_0_40px_rgba(0,0,0,0.2)]  rounded-4xl  ">
             {sidebarNavItems.map((item, index) => (
               <NavLink
                 to={item.to}
@@ -51,12 +69,48 @@ export const Sidebar = () => {
             ))}
           </div>
         </div>
-
         {/* Bottom buttons */}
-        <div className="flex flex-row px-5 gap-5 w-full mb-10 justify-center items-center">
-          <Button fullWidth>DARKMODE</Button>
-          <Button fullWidth>LANGUAGE</Button>
-        </div>
+        {exampleUser ? (
+          <div className="flex flex-row px-5 gap-5 w-full mb-10 justify-center items-center">
+            <Button
+              className="w-50 h-10 items-center flex justify-around"
+              onClick={() => navigate("/profile")}
+            >
+              <Avatar sx={{ bgcolor: "white", height: 30, width: 30 }}>
+                {exampleUser.gender === "male" ? (
+                  <FaceRoundedIcon className=" text-blue-500" />
+                ) : exampleUser.gender === "female" ? (
+                  <Face2RoundedIcon className=" text-pink-500" />
+                ) : (
+                  <AccountCircleRoundedIcon className=" text-yellow-500" />
+                )}
+              </Avatar>
+              <span className="text-lg">
+                {exampleUser.username} ({exampleUser.age})
+              </span>
+              <Tooltip title="Logout">
+                <IconButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log("Logging out");
+                  }}
+                  size="small"
+                >
+                  <ExitToAppRoundedIcon className="text-white" />
+                </IconButton>
+              </Tooltip>
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-row px-5 gap-5 w-full mb-10 justify-center items-center">
+            <Button fullWidth onClick={() => navigate("/login")}>
+              LOGIN
+            </Button>
+            <Button fullWidth onClick={() => navigate("/register")}>
+              REGISTER
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
