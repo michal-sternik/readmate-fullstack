@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Sidebar } from "../Sidebar/Sidebar";
 import { Search } from "../Search/Search";
-import { AuthSection } from "../AuthSection/AuthSection";
+import { DarkmodeButton } from "../DarkmodeButton/DarkmodeButton";
 
 export const RootLayout = () => {
   const typing = false;
@@ -25,7 +25,7 @@ export const RootLayout = () => {
               </p>
               <div className="flex flex-col w-full lg:flex-row gap-5 items-center">
                 <Search />
-                <AuthSection />
+                <DarkmodeButton />
               </div>
             </div>
           </div>
