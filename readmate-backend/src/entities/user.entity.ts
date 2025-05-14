@@ -6,8 +6,10 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { UserBook } from './user-book.entity';
 
 @Entity()
 export class User {
@@ -36,7 +38,6 @@ export class User {
   })
   role: Role;
 
-  @ManyToMany(() => Book, (book) => book.associatedUsers)
-  @JoinTable()
-  userBooks: Book[];
+  @OneToMany(() => UserBook, (userBook) => userBook.user)
+  userBooks: UserBook[];
 }

@@ -12,6 +12,7 @@ import {
 } from 'src/exceptions/exceptions';
 import * as bcrypt from 'bcrypt';
 import { AuthJwtPayload } from './types/jwtPayload';
+import { RequestUser } from './types/requestUser';
 
 @Injectable()
 export class AuthService {
@@ -63,6 +64,7 @@ export class AuthService {
   async validateJwtUser(userId: number) {
     const user = await this.userService.getUserById(userId);
     if (!user) throw new UserNotFoundException(userId);
-    return { id: user.id, role: user.role };
+    const requestUser: RequestUser = { id: user.id, role: user.role };
+    return requestUser;
   }
 }

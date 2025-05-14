@@ -38,9 +38,9 @@ export class FutureDateError extends HttpException {
   }
 }
 
-export class PostNotFoundException extends HttpException {
-  constructor(prop: number) {
-    super(`Post with id: '${prop}' not found.`, HttpStatus.NOT_FOUND);
+export class BookNotFoundException extends HttpException {
+  constructor(prop: number | string) {
+    super(`Book with id: '${prop}' not found.`, HttpStatus.NOT_FOUND);
   }
 }
 
