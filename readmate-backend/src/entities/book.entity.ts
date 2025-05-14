@@ -1,34 +1,27 @@
-import {
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToMany,
-  Entity,
-  OneToMany,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 
-import { User } from './user.entity';
 import { UserBook } from './user-book.entity';
 @Entity()
 export class Book {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: string;
   @Column()
   title: string;
 
-  @Column()
-  description: string;
+  @Column({ type: 'text', nullable: true })
+  description?: string | null;
 
   @Column({ type: 'date', nullable: true })
   publishedDate?: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'integer', nullable: true })
   pageCount?: number | null;
 
-  @Column('simple-array')
-  authors: string[];
+  @Column('simple-array', { nullable: true })
+  authors?: string[] | null;
 
-  @Column('simple-array')
-  categories: string[];
+  @Column('simple-array', { nullable: true })
+  categories?: string[] | null;
 
   @OneToMany(() => UserBook, (userBook) => userBook.book)
   userBooks: UserBook[];

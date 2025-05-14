@@ -52,3 +52,11 @@ export class WrongUserAccessException extends HttpException {
     );
   }
 }
+export class UserBookNotFoundError extends HttpException {
+  constructor(userId: number, prop: number | string) {
+    super(
+      `User with id: ${userId} does not own book with id: '${prop}'.`,
+      HttpStatus.NOT_FOUND,
+    );
+  }
+}

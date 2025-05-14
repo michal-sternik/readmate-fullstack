@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import * as dayjs from 'dayjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Book } from 'src/entities/book.entity';
 import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateBookDto } from './dtos/createbook.dto';
 import { UserBookService } from 'src/user-book/user-book.service';
+import { EditReadDatesDto } from './dtos/editreaddates.dto';
+import { BookWithDates } from './types/bookwithdates.type';
 
 @Injectable()
 export class BookService {
@@ -14,29 +17,31 @@ export class BookService {
     private readonly userBookService: UserBookService,
   ) {}
 
-  async addOrConnectBookToUser(userId: number, dto: CreateBookDto) {
-    let book = await this.bookRepo.findOne({ where: { title: dto.title } });
+  async addOrConnectBookToUser(userId: number, createBookDto: CreateBookDto) {
+    let book = await this.bookRepo.findOne({
+      where: { title: createBookDto.title },
+    });
 
     if (!book) {
       book = this.bookRepo.create({
-        title: dto.title,
-        description: dto.description,
-        authors: dto.authors,
-        categories: dto.categories,
-        pageCount: dto.pageCount,
-        publishedDate: dto.publishedDate?.toISOString() ?? null,
+        ...createBookDto,
+        publishedDate: createBookDto.publishedDate
+          ? dayjs(createBookDto.publishedDate).toISOString()
+          : null,
       });
       book = await this.bookRepo.save(book);
     }
 
-    await this.userBookService.connectUserToBook(
+    const newUserBook = await this.userBookService.connectUserToBook(
       userId,
       book,
-      dto.startDate.toISOString(),
-      dto.endDate?.toISOString() ?? undefined,
+      dayjs(createBookDto.startDate).toISOString(),
+      createBookDto.endDate
+        ? dayjs(createBookDto.endDate).toISOString()
+        : undefined,
     );
 
-    return book;
+    return { bookId: newUserBook.bookId };
   }
 
   async removeBookFromUser(userId: number, bookId: string) {
@@ -50,9 +55,41 @@ export class BookService {
     return { success: true };
   }
 
-  async findOrFailById(id: string): Promise<Book> {
-    const book = await this.bookRepo.findOne({ where: { id } });
-    if (!book) throw new Error('Book not found');
-    return book;
+  async editUserReadDates(
+    id: number,
+    editedBookId: string,
+    editedBookDto: EditReadDatesDto,
+  ) {
+    const userBook = await this.userBookService.findUserBookById(
+      id,
+      editedBookId,
+    );
+    Object.assign(userBook, editedBookDto);
+    return await this.userBookService.saveUserBook(userBook);
   }
+  async getOneUserBook(userId: number, bookId: string) {
+    const userBook = await this.userBookService.findUserBookById(
+      userId,
+      bookId,
+    );
+    const bookWithDates: BookWithDates = {
+      ...userBook.book,
+      startDate: userBook.startDate,
+      endDate: userBook.endDate ?? undefined,
+    };
+    return bookWithDates;
+  }
+  async getUserBookListPaginated(
+    userId: number,
+    page: number,
+    itemsPerPage: number,
+  ) {
+    const userBooks = await this.userBookService.getUserBookListPaginated(
+      userId,
+      page,
+      itemsPerPage,
+    );
+    return userBooks;
+  }
+  // Removed the incorrect dayjs function implementation.
 }
