@@ -6,21 +6,20 @@ import { GuestJwtAuthGuard } from 'src/auth/guards/jwt-auth/guest-jwt-auth.guard
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 
+@ApiBearerAuth()
+@Roles(Role.USER)
 @Controller('user')
 export class UserController {
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Hello world' })
-  @UseGuards(GuestJwtAuthGuard, RolesGuard)
+  @UseGuards(GuestJwtAuthGuard)
   @Roles(Role.GUEST)
-  //   @UseGuards(RolesGuard)
   @Get()
   getHello(): string {
     return 'Hello world from UserController!';
   }
 
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Hello world2' })
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('2')
   getHello2(): string {
     return 'Hello world2 from UserController!';

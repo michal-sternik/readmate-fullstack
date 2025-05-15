@@ -38,9 +38,9 @@ export class FutureDateError extends HttpException {
   }
 }
 
-export class PostNotFoundException extends HttpException {
-  constructor(prop: number) {
-    super(`Post with id: '${prop}' not found.`, HttpStatus.NOT_FOUND);
+export class BookNotFoundException extends HttpException {
+  constructor(prop: number | string) {
+    super(`Book with id: '${prop}' not found.`, HttpStatus.NOT_FOUND);
   }
 }
 
@@ -49,6 +49,22 @@ export class WrongUserAccessException extends HttpException {
     super(
       `User with id: '${userId}' cannot interact post with id: ${postId}. Wrong access.`,
       HttpStatus.FORBIDDEN,
+    );
+  }
+}
+export class UserBookNotFoundError extends HttpException {
+  constructor(userId: number, prop: number | string) {
+    super(
+      `User with id: ${userId} does not own book with id: '${prop}'.`,
+      HttpStatus.NOT_FOUND,
+    );
+  }
+}
+export class GoogleBooksApiError extends HttpException {
+  constructor() {
+    super(
+      `Failed to fetch data from Google Books API `,
+      HttpStatus.BAD_GATEWAY,
     );
   }
 }
