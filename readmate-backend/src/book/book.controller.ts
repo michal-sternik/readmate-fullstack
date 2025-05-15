@@ -34,6 +34,10 @@ import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
+  @ApiOperation({
+    summary:
+      'Protected route - returns books read for user for specified month and sibling months',
+  })
   @Get('calendar')
   async getUserCalendar(
     @Req() request: { user: RequestUser },
@@ -41,6 +45,17 @@ export class BookController {
     @Query('year') year: number,
   ) {
     return this.bookService.getUserCalendar(request.user.id, month, year);
+  }
+
+  @ApiOperation({
+    summary: 'Protected route - returns statistics of reading for current user',
+  })
+  @Get('statistics')
+  async getUserStatistics(
+    @Req() request: { user: RequestUser },
+    @Query('year') year: number,
+  ) {
+    return this.bookService.getUserReadingStatistics(request.user.id, year);
   }
 
   @ApiOperation({

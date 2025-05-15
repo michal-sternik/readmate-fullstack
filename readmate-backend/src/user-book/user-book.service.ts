@@ -155,4 +155,23 @@ export class UserBookService {
       endDate: ub.endDate ?? undefined,
     }));
   }
+
+  async getUserBooksWithEndDateOfSpecificYear(userId: number, year: number) {
+    const startOfYear = dayjs(new Date(year, 0, 1)).format('YYYY-MM-DD');
+    const endOfYear = dayjs(new Date(year, 11, 31)).format('YYYY-MM-DD');
+
+    const userBooks = await this.userBookRepo.find({
+      where: {
+        user: { id: userId },
+        endDate: MoreThanOrEqual(startOfYear) && LessThanOrEqual(endOfYear),
+      },
+      relations: ['book'],
+    });
+
+    return userBooks.map((ub) => ({
+      ...ub.book,
+      startDate: ub.startDate,
+      endDate: ub.endDate ?? undefined,
+    }));
+  }
 }

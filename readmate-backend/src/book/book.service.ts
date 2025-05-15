@@ -6,14 +6,10 @@ import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import { CreateBookDto } from './dtos/createbook.dto';
 import { UserBookService } from 'src/user-book/user-book.service';
-import { EditReadDatesDto } from './dtos/editreaddates.dto';
 import { BookWithDates } from './types/bookwithdates.type';
-import { getBooksInWeek } from 'src/utils/calendar.utils';
-import {
-  convertDayjsToString,
-  generateCalendarDays,
-  splitIntoWeeks,
-} from 'src/utils/date.utils';
+import { EditReadDatesDto } from './dtos/editreaddates.dto';
+
+const MINUTES_PER_PAGE = 2; //average world reading speed
 
 @Injectable()
 export class BookService {
@@ -103,14 +99,25 @@ export class BookService {
       month,
       year,
     );
-    const days = generateCalendarDays(year, month);
-    const weeks = splitIntoWeeks(days);
 
-    const result = weeks.map((week) => ({
-      days: week.map((d) => convertDayjsToString(dayjs(d.date))),
-      books: getBooksInWeek(week, books),
-    }));
+    return books;
+  }
 
-    return result;
+  async getUserReadingStatistics(userId: number, year: number) {
+    const booksReadThisYear =
+      await this.userBookService.getUserBooksWithEndDateOfSpecificYear(
+        userId,
+        year,
+      );
+
+    const hoursRead = booksReadThisYear.reduce((sum, book) => {
+      if (!book.pageCount || book.pageCount === null) return sum;
+      return sum + book.pageCount * MINUTES_PER_PAGE;
+    }, 0);
+
+    return {
+      numbersOfBookRead: booksReadThisYear.length,
+      hoursRead: Math.round(hoursRead / 60),
+    };
   }
 }
