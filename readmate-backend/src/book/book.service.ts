@@ -8,6 +8,9 @@ import { CreateBookDto } from './dtos/createbook.dto';
 import { UserBookService } from 'src/user-book/user-book.service';
 import { BookWithDates } from './types/bookwithdates.type';
 import { EditReadDatesDto } from './dtos/editreaddates.dto';
+import axios, { AxiosResponse } from 'axios';
+import { ExploreBookDto } from './dtos/explorebook.dto';
+import { GoogleBooksItem } from './types/googlebook.type';
 
 const MINUTES_PER_PAGE = 2; //average world reading speed
 
@@ -119,5 +122,58 @@ export class BookService {
       numbersOfBookRead: booksReadThisYear.length,
       hoursRead: Math.round(hoursRead / 60),
     };
+  }
+
+  async searchGoogleBooks(
+    searchQuery: string,
+    startIndex: number = 0,
+    maxResults: number = 9,
+    langRestrict?: boolean,
+  ): Promise<ExploreBookDto[]> {
+    const key = process.env.GOOGLE_BOOKS_API_KEY;
+    const params = new URLSearchParams({
+      q: searchQuery,
+      maxResults: maxResults.toString(),
+      startIndex: startIndex.toString(),
+      ...(key && { key }),
+      ...(langRestrict && { langRestrict: 'pl' }),
+    });
+
+    if (key) {
+      params.append('key', key);
+    }
+
+    if (langRestrict) {
+      params.append('langRestrict', 'pl');
+    }
+
+    const url = `https://www.googleapis.com/books/v1/volumes?${params.toString()}`;
+
+    try {
+      const { data } = await axios.get<{ items: GoogleBooksItem[] }>(url);
+      const items = data?.items ?? [];
+
+      return items.map((item: GoogleBooksItem) => {
+        const info = item.volumeInfo;
+
+        return {
+          id: item.id,
+          title: info.title,
+          authors:
+            info.authors ??
+            (info.publisher ? [info.publisher] : ['Unknown Author']),
+          publishedDate: info.publishedDate
+            ? dayjs(info.publishedDate).format('YYYY-MM-DD')
+            : null,
+          link: info.infoLink,
+          categories: info.categories ?? ['Other'],
+          imageLink: info.imageLinks?.thumbnail ?? 'defaultImage',
+          description: info.description ?? undefined,
+          pageCount: info.pageCount ?? undefined,
+        };
+      });
+    } catch (error) {
+      throw new Error(`Failed to fetch data from Google Books API: ${error}`);
+    }
   }
 }

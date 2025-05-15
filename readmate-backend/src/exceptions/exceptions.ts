@@ -60,3 +60,11 @@ export class UserBookNotFoundError extends HttpException {
     );
   }
 }
+export class GoogleBooksApiError extends HttpException {
+  constructor() {
+    super(
+      `Failed to fetch data from Google Books API `,
+      HttpStatus.BAD_GATEWAY,
+    );
+  }
+}

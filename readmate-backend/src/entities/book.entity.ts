@@ -23,6 +23,12 @@ export class Book {
   @Column('simple-array', { nullable: true })
   categories?: string[] | null;
 
+  @Column({ type: 'text', nullable: true })
+  link?: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  imageLink?: string | null;
+
   @OneToMany(() => UserBook, (userBook) => userBook.book)
   userBooks: UserBook[];
 }

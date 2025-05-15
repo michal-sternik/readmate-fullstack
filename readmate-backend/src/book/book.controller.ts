@@ -25,11 +25,10 @@ import { UserBook } from 'src/entities/user-book.entity';
 import { Role } from 'src/auth/enums/role.enum';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
+import { GuestJwtAuthGuard } from 'src/auth/guards/jwt-auth/guest-jwt-auth.guard';
 
 @ApiBearerAuth()
 @Roles(Role.USER)
-@UseGuards(RolesGuard)
-@UseGuards(JwtAuthGuard)
 @Controller('book')
 export class BookController {
   constructor(private readonly bookService: BookService) {}
@@ -38,6 +37,7 @@ export class BookController {
     summary:
       'Protected route - returns books read for user for specified month and sibling months',
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('calendar')
   async getUserCalendar(
     @Req() request: { user: RequestUser },
@@ -50,6 +50,7 @@ export class BookController {
   @ApiOperation({
     summary: 'Protected route - returns statistics of reading for current user',
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('statistics')
   async getUserStatistics(
     @Req() request: { user: RequestUser },
@@ -58,9 +59,33 @@ export class BookController {
     return this.bookService.getUserReadingStatistics(request.user.id, year);
   }
 
+  @ApiQuery({
+    name: 'langRestrict',
+    required: false,
+    description: 'Optional if wanted to fetch only polish',
+  })
+  @Roles(Role.GUEST)
+  @UseGuards(GuestJwtAuthGuard, RolesGuard)
+  @Get('search')
+  async searchBooks(
+    @Query('searchQuery') searchQuery: string,
+    @Query('startIndex') startIndex: number = 0,
+    @Query('langRestrict') langRestrict?: 'true' | 'false',
+    @Query('maxResults') maxResults: number = 9,
+  ) {
+    const restrict = langRestrict === 'true';
+    return this.bookService.searchGoogleBooks(
+      searchQuery,
+      startIndex,
+      maxResults,
+      restrict,
+    );
+  }
+
   @ApiOperation({
     summary: 'Protected route - Returns user book by id',
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
   async getOneUserBook(
     @Req() request: { user: RequestUser },
@@ -77,6 +102,7 @@ export class BookController {
     required: false,
     description: 'Optional user ID for admin',
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   async getUserBookListPaginated(
     @Req() request: { user: RequestUser },
@@ -104,6 +130,7 @@ export class BookController {
     description: 'User relation to book created successfully',
     type: UserBook,
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   async addOrConnectBookToUser(
     @Req() request: { user: RequestUser },
@@ -118,6 +145,7 @@ export class BookController {
   @ApiOperation({
     summary: 'Protected route - modifies user read dates for book',
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   async editUserReadDates(
     @Req() request: { user: RequestUser },
@@ -135,6 +163,7 @@ export class BookController {
     summary:
       'Protected route - deletes relation between user and book and book if no one else has it',
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   async removeBookFromUser(
     @Req() request: { user: RequestUser },
