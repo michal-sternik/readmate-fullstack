@@ -8,6 +8,12 @@ import { CreateBookDto } from './dtos/createbook.dto';
 import { UserBookService } from 'src/user-book/user-book.service';
 import { EditReadDatesDto } from './dtos/editreaddates.dto';
 import { BookWithDates } from './types/bookwithdates.type';
+import { getBooksInWeek } from 'src/utils/calendar.utils';
+import {
+  convertDayjsToString,
+  generateCalendarDays,
+  splitIntoWeeks,
+} from 'src/utils/date.utils';
 
 @Injectable()
 export class BookService {
@@ -91,5 +97,20 @@ export class BookService {
     );
     return userBooks;
   }
-  // Removed the incorrect dayjs function implementation.
+  async getUserCalendar(userId: number, month: number, year: number) {
+    const books = await this.userBookService.getUserBooksForCalendar(
+      userId,
+      month,
+      year,
+    );
+    const days = generateCalendarDays(year, month);
+    const weeks = splitIntoWeeks(days);
+
+    const result = weeks.map((week) => ({
+      days: week.map((d) => convertDayjsToString(dayjs(d.date))),
+      books: getBooksInWeek(week, books),
+    }));
+
+    return result;
+  }
 }

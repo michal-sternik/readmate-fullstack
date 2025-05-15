@@ -34,6 +34,15 @@ import { RolesGuard } from 'src/auth/guards/roles/roles.guard';
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
+  @Get('calendar')
+  async getUserCalendar(
+    @Req() request: { user: RequestUser },
+    @Query('month') month: number,
+    @Query('year') year: number,
+  ) {
+    return this.bookService.getUserCalendar(request.user.id, month, year);
+  }
+
   @ApiOperation({
     summary: 'Protected route - Returns user book by id',
   })

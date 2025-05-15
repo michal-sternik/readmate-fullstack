@@ -5,8 +5,8 @@ import { Book } from 'src/entities/book.entity';
 import { UserBook } from 'src/entities/user-book.entity';
 import { UserBookNotFoundError } from 'src/exceptions/exceptions';
 import { UserService } from 'src/user/user.service';
-import { Repository } from 'typeorm';
-
+import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import * as dayjs from 'dayjs';
 @Injectable()
 export class UserBookService {
   constructor(
@@ -118,5 +118,41 @@ export class UserBookService {
         endDate: userBook.endDate,
       })),
     };
+  }
+  async getUserBooksForCalendar(
+    userId: number,
+    month: number,
+    year: number,
+  ): Promise<BookWithDates[]> {
+    //we do not consider books with endDate less than month -1. they won't appear in calendar anyway
+
+    const calendarStart = dayjs(new Date(year, month - 1, 1)).format(
+      'YYYY-MM-DD',
+    );
+    const calendarEnd = dayjs(new Date(year, month + 1, 0)).format(
+      'YYYY-MM-DD',
+    );
+
+    const userBooks = await this.userBookRepo.find({
+      where: [
+        {
+          userId,
+          startDate: LessThanOrEqual(calendarEnd),
+          endDate: IsNull(), // ongoing books
+        },
+        {
+          userId,
+          startDate: LessThanOrEqual(calendarEnd),
+          endDate: MoreThanOrEqual(calendarStart),
+        },
+      ],
+      relations: ['book'],
+    });
+
+    return userBooks.map((ub) => ({
+      ...ub.book,
+      startDate: ub.startDate,
+      endDate: ub.endDate ?? undefined,
+    }));
   }
 }
