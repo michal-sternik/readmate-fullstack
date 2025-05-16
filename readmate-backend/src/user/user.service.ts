@@ -4,6 +4,8 @@ import { RegisterDto } from 'src/auth/dtos/register.dto';
 import { User } from 'src/entities/user.entity';
 import { UserNotFoundException } from 'src/exceptions/exceptions';
 import { Repository } from 'typeorm';
+import { UserInfoDto } from './dtos/userinfo.dto';
+import { getAge } from 'src/utils/date.utils';
 
 @Injectable()
 export class UserService {
@@ -55,5 +57,24 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async getUserFrontendInfoById(id: number): Promise<UserInfoDto> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+    });
+    if (!user) {
+      throw new UserNotFoundException(id);
+    }
+
+    const returnUser: UserInfoDto = {
+      username: user.username,
+      email: user.email,
+      createdAt: user.createdAt,
+      age: getAge(user.birthDate),
+      role: user.role,
+    };
+
+    return returnUser;
   }
 }

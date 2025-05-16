@@ -9,6 +9,10 @@ import ExitToAppRoundedIcon from "@mui/icons-material/ExitToAppRounded";
 import { Avatar } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import { RootState, useAppDispatch } from "../../redux/store";
+import { useSelector } from "react-redux";
+import { Gender } from "../../types/usertypes";
+import { clearUser } from "../../redux/userSlice";
 
 const sidebarNavItems = [
   {
@@ -29,18 +33,10 @@ const sidebarNavItems = [
   },
 ];
 
-const exampleUser = {
-  id: 1,
-  username: "test",
-  email: "test@test.com",
-  gender: "male",
-  createdAt: "2023-10-01T12:00:00Z",
-  age: 25,
-};
-// const exampleUser = undefined;
-
 export const Sidebar = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const user = useSelector((state: RootState) => state.user.user);
   return (
     <div className="h-full w-full lg:min-w-[250px] lg:max-w-[400px] flex justify-center items-center ">
       <div className="w-full h-full flex gap-5 lg:gap-0 flex-col items-center bg-white/10 shadow-[0_0_40px_rgba(0,0,0,0.3)] lg:backdrop-blur-sm rounded-4xl border border-white/20">
@@ -70,29 +66,31 @@ export const Sidebar = () => {
           </div>
         </div>
         {/* Bottom buttons */}
-        {exampleUser ? (
+        {user ? (
           <div className="flex flex-row px-5 gap-5 w-full mb-10 justify-center items-center">
             <Button
-              className="w-50 h-10 items-center flex justify-around"
+              className="w-100 h-10 items-center flex justify-around"
               onClick={() => navigate("/profile")}
             >
               <Avatar sx={{ bgcolor: "white", height: 30, width: 30 }}>
-                {exampleUser.gender === "male" ? (
+                {user?.gender === Gender.MALE ? (
                   <FaceRoundedIcon className=" text-blue-500" />
-                ) : exampleUser.gender === "female" ? (
+                ) : user?.gender === Gender.FEMALE ? (
                   <Face2RoundedIcon className=" text-pink-500" />
                 ) : (
                   <AccountCircleRoundedIcon className=" text-yellow-500" />
                 )}
               </Avatar>
-              <span className="text-lg">
-                {exampleUser.username} ({exampleUser.age})
+              <span className="text-lg whitespace-nowrap">
+                {user?.username} ({user?.age})
               </span>
               <Tooltip title="Logout">
                 <IconButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    console.log("Logging out");
+                    localStorage.removeItem("token");
+                    dispatch(clearUser());
+                    navigate("/login");
                   }}
                   size="small"
                 >

@@ -169,7 +169,7 @@ export const Calendar = () => {
                   {week.map((day, dayIdx) => (
                     <div
                       key={`day-${dayIdx}`}
-                      className={`min-h-10 md:min-h-20 flex-1 flex flex-col ${
+                      className={`min-h-10 md:min-h-15 flex-1 flex flex-col ${
                         day.isCurrentMonth ? "" : "text-gray-400"
                       } 
                         

@@ -1,6 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
 import { Book, CallendarBook } from "../types/booktypes";
 import { WEEKSPLIT, WEEKDURATION } from "./constants";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 export const getBooksInWeek = (
   week: { date: Date }[],
@@ -119,4 +121,20 @@ export const toDateOrUndefined = (
   day: Dayjs | null | undefined
 ): Date | undefined => {
   return day ? new Date(dayjs(day).format("YYYY-MM-DD")) : undefined;
+};
+
+export const convertAndDisplayError = (e: unknown) => {
+  console.log(e);
+  const error = e as AxiosError<{ message?: string | string[] }>;
+
+  let message = "Something went wrong!";
+  const backendMessage = error.response?.data?.message;
+
+  if (Array.isArray(backendMessage)) {
+    message = backendMessage[0] || message;
+  } else if (typeof backendMessage === "string") {
+    message = backendMessage;
+  }
+
+  toast.error(message);
 };

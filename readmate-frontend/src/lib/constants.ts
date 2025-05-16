@@ -2,6 +2,7 @@ import { Book } from "../types/booktypes";
 
 export const WEEKSPLIT = 14;
 export const WEEKDURATION = 7;
+export const API_BASE_URL = "http://localhost:3000/api";
 
 export const mockBooks: Book[] = [
   {

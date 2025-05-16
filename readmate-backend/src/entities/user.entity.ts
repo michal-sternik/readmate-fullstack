@@ -10,6 +10,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserBook } from './user-book.entity';
+import { Gender } from 'src/auth/enums/gender.enum';
 
 @Entity()
 export class User {
@@ -37,6 +38,13 @@ export class User {
     default: Role.USER,
   })
   role: Role;
+
+  @Column({
+    type: 'enum',
+    enum: Gender,
+    default: Gender.OTHER,
+  })
+  gender: Gender;
 
   @OneToMany(() => UserBook, (userBook) => userBook.user)
   userBooks: UserBook[];

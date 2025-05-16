@@ -134,7 +134,7 @@ export const SimpleCalendar = () => {
           {actual7DaysRange.map((day, dayIdx) => (
             <div
               key={`day-${dayIdx}`}
-              className={`min-h-30 md:min-h-40 flex-1 flex flex-col ${
+              className={`min-h-30 md:min-h-30 flex-1 flex flex-col ${
                 day.isCurrentMonth ? "" : "text-gray-400"
               } 
                         
