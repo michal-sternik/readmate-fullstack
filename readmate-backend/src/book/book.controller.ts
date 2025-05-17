@@ -136,6 +136,7 @@ export class BookController {
     @Req() request: { user: RequestUser },
     @Body() createBookDto: CreateBookDto,
   ) {
+    console.log(createBookDto);
     return this.bookService.addOrConnectBookToUser(
       request.user.id,
       createBookDto,

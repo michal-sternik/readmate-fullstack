@@ -20,7 +20,10 @@ export interface CallendarBook extends Book {
   start: number;
   span: number;
 }
-
+export type BookIdWithDates = {
+  startDate: string;
+  endDate?: string | null;
+};
 // export type ExploreBook = {
 //   id: string;
 //   volumeInfo: {
@@ -35,4 +38,10 @@ export interface CallendarBook extends Book {
 //       thumbnail?: string;
 //     };
 //   };
-// };
+export type PaginatedBooks = {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
+  items: Book[];
+};

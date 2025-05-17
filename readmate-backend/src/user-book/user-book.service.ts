@@ -3,7 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { BookWithDates } from 'src/book/types/bookwithdates.type';
 import { Book } from 'src/entities/book.entity';
 import { UserBook } from 'src/entities/user-book.entity';
-import { UserBookNotFoundError } from 'src/exceptions/exceptions';
+import {
+  DuplicateBookException,
+  UserBookNotFoundError,
+} from 'src/exceptions/exceptions';
 import { UserService } from 'src/user/user.service';
 import { IsNull, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import * as dayjs from 'dayjs';
@@ -30,13 +33,14 @@ export class UserBookService {
       },
     });
 
-    if (exists) return exists;
+    if (exists) throw new DuplicateBookException();
 
     const entry = this.userBookRepo.create({
       user,
       book,
       startDate,
       endDate: endDate ?? null,
+      createdAt: new Date().toISOString(),
     });
 
     return await this.userBookRepo.save(entry);
@@ -105,6 +109,7 @@ export class UserBookService {
       relations: ['book'],
       skip: (page - 1) * itemsPerPage,
       take: itemsPerPage,
+      order: { createdAt: 'DESC' },
     });
 
     return {

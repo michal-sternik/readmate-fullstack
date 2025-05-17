@@ -123,6 +123,10 @@ export const toDateOrUndefined = (
   return day ? new Date(dayjs(day).format("YYYY-MM-DD")) : undefined;
 };
 
+export const formatFullDate = (date: Date) => {
+  return date.toISOString().slice(0, 10);
+};
+
 export const convertAndDisplayError = (e: unknown) => {
   console.log(e);
   const error = e as AxiosError<{ message?: string | string[] }>;

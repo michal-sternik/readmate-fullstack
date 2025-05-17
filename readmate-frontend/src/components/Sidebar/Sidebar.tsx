@@ -68,8 +68,8 @@ export const Sidebar = () => {
         {/* Bottom buttons */}
         {user ? (
           <div className="flex flex-row px-5 gap-5 w-full mb-10 justify-center items-center">
-            <Button
-              className="w-100 h-10 items-center flex justify-around"
+            <div
+              className=" rounded-full text-white bg-purple-400 hover:bg-purple-500 w-100 h-10 items-center flex justify-around"
               onClick={() => navigate("/profile")}
             >
               <Avatar sx={{ bgcolor: "white", height: 30, width: 30 }}>
@@ -97,7 +97,7 @@ export const Sidebar = () => {
                   <ExitToAppRoundedIcon className="text-white" />
                 </IconButton>
               </Tooltip>
-            </Button>
+            </div>
           </div>
         ) : (
           <div className="flex flex-row px-5 gap-5 w-full mb-10 justify-center items-center">

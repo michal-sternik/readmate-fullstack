@@ -68,3 +68,8 @@ export class GoogleBooksApiError extends HttpException {
     );
   }
 }
+export class DuplicateBookException extends HttpException {
+  constructor() {
+    super(`User is already reading this book.`, HttpStatus.CONFLICT);
+  }
+}

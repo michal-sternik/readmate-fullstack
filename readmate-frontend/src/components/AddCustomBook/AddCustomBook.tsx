@@ -20,7 +20,10 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "../Button/Button";
 import { Book } from "../../types/booktypes";
 import React, { useEffect, useState } from "react";
-import { toDateOrUndefined } from "../../lib/utils";
+import { convertAndDisplayError, toDateOrUndefined } from "../../lib/utils";
+import { BookService } from "../../api/services/bookService";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 type FormValues = {
   title: string;
@@ -62,13 +65,15 @@ export const AddCustomBook = () => {
 
   const [currentlyReading, setCurrentlyReading] = useState(false);
   const [formResetKey, setFormResetKey] = useState(0);
+  const navigate = useNavigate();
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     console.log("test");
     if (!data.startDate) return;
 
-    const finalData: Omit<Book, "id"> = {
+    const finalData: Book = {
       ...data,
+      id: crypto.randomUUID().slice(0, 12),
       publishedDate: toDateOrUndefined(data.publishedDate),
       startDate: toDateOrUndefined(data.startDate)!,
       endDate: currentlyReading ? undefined : toDateOrUndefined(data.endDate),
@@ -76,7 +81,13 @@ export const AddCustomBook = () => {
       imageLink: "",
     };
 
-    console.log("Book submitted:", finalData);
+    try {
+      await BookService.addBook(finalData);
+      toast.success("Book added successfully!");
+      navigate("/profile");
+    } catch (error) {
+      convertAndDisplayError(error);
+    }
   };
 
   const handleReset = () => {

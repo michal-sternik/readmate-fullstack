@@ -47,7 +47,11 @@ function App() {
       <Provider store={store}>
         {/* <Toaster position="bottom-left" /> */}
         <RouterProvider router={router} />
-        <ToastContainer position="bottom-left" theme="colored" />
+        <ToastContainer
+          position="bottom-left"
+          theme="colored"
+          autoClose={2000}
+        />
       </Provider>
     </SkeletonTheme>
   );
