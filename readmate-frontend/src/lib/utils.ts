@@ -1,6 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Book, CallendarBook } from "../types/booktypes";
+import { Book, CallendarBook, SkeletonCalendarBook } from "../types/booktypes";
 import { WEEKSPLIT, WEEKDURATION } from "./constants";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
 
 export const getBooksInWeek = (
   week: { date: Date }[],
@@ -119,4 +121,40 @@ export const toDateOrUndefined = (
   day: Dayjs | null | undefined
 ): Date | undefined => {
   return day ? new Date(dayjs(day).format("YYYY-MM-DD")) : undefined;
+};
+
+export const formatFullDate = (date: Date) => {
+  return date.toISOString().slice(0, 10);
+};
+
+export const convertAndDisplayError = (e: unknown) => {
+  console.log(e);
+  const error = e as AxiosError<{ message?: string | string[] }>;
+
+  let message = "Something went wrong!";
+  const backendMessage = error.response?.data?.message;
+
+  if (Array.isArray(backendMessage)) {
+    message = backendMessage[0] || message;
+  } else if (typeof backendMessage === "string") {
+    message = backendMessage;
+  }
+
+  toast.error(message);
+};
+
+export const generateSkeletonBooksForWeek = (): SkeletonCalendarBook[] => {
+  const numberOfSkeletonBooks = Math.floor(Math.random() * 3) + 1; // 1–3 książki
+  const skeletonBooks: SkeletonCalendarBook[] = [];
+
+  for (let i = 0; i < numberOfSkeletonBooks; i++) {
+    const start = Math.floor(Math.random() * 8) + 1; // od 1 do 8
+    const span = Math.floor(Math.random() * (14 - start)) + 1;
+    skeletonBooks.push({
+      start,
+      span,
+    });
+  }
+
+  return skeletonBooks;
 };

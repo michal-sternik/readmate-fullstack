@@ -1,45 +1,46 @@
 import { useForm, Controller, FormProvider } from "react-hook-form";
-import { TextField } from "@mui/material";
+import {
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
+  TextField,
+} from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import registerImage from "../../assets/images/register.png";
 
 import { Button } from "../Button/Button";
 
-import { toDateOrUndefined } from "../../lib/utils";
+import { convertAndDisplayError } from "../../lib/utils";
+import { Gender } from "../../types/usertypes";
+import { UserService } from "../../api/services/userService";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-type FormValues = {
+export type RegisterFormValues = {
   username: string;
   email: string;
   password: string;
   confirmPassword: string;
-  birthDate: Dayjs | null;
-  gender: "male" | "female" | "other";
+  birthDate: string | null;
+  gender: Gender;
 };
 
-const initialFormValues: FormValues = {
+const initialFormValues: RegisterFormValues = {
   username: "",
   email: "",
   password: "",
   confirmPassword: "",
   birthDate: null,
-  gender: "male",
-};
-
-type RegisterUser = {
-  id: number;
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  birthDate: Date;
-  gender: "male" | "female" | "other";
+  gender: Gender.MALE,
 };
 
 export const Register = () => {
-  const form = useForm<FormValues>({
+  const navigate = useNavigate();
+  const form = useForm<RegisterFormValues>({
     defaultValues: {
       ...initialFormValues,
     },
@@ -54,24 +55,33 @@ export const Register = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit = (data: FormValues) => {
-    console.log("test");
-
-    const finalData: Omit<RegisterUser, "id"> = {
-      ...data,
-      birthDate: toDateOrUndefined(data.birthDate)!,
-    };
-
-    console.log("User registered:", finalData);
+  const onSubmit = async (data: RegisterFormValues) => {
+    console.log(data);
+    try {
+      const payload = {
+        ...data,
+        birthDate: data.birthDate
+          ? dayjs(data.birthDate).format("YYYY-MM-DD")
+          : null,
+      };
+      await UserService.register(payload);
+      toast.success("Registered successfully, now log in!");
+      navigate("/login");
+    } catch (error) {
+      convertAndDisplayError(error);
+    }
   };
 
   const handleReset = () => {
     reset(initialFormValues);
   };
-
+  console.log(form.getValues());
   return (
     <FormProvider {...form}>
-      <div className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full"
+      >
         <div className="flex flex-col w-full xl:w-1/2 h-full justify-between gap-5">
           <div className="flex flex-col w-full gap-4 overflow-auto scrollbar-hide">
             <div className="text-2xl font-extrabold text-[#A449FF]">
@@ -139,7 +149,7 @@ export const Register = () => {
                     {...field}
                     label="Birth Date"
                     value={field.value ? dayjs(field.value) : null}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={(date) => field.onChange(date ? date : null)}
                     disableFuture
                     slotProps={{
                       textField: {
@@ -153,14 +163,50 @@ export const Register = () => {
                   />
                 )}
               />
+              <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
             </LocalizationProvider>
+            <Controller
+              name="gender"
+              control={control}
+              rules={{ required: "Gender is required." }}
+              render={({ field }) => (
+                <RadioGroup
+                  row
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  defaultValue={Gender.MALE}
+                  {...field}
+                  value={field.value}
+                  name="radio-buttons-group"
+                >
+                  <FormControlLabel
+                    value={Gender.MALE}
+                    control={<Radio />}
+                    label="Male"
+                  />
+                  <FormControlLabel
+                    value={Gender.FEMALE}
+                    control={<Radio />}
+                    label="Female"
+                  />
+                  <FormControlLabel
+                    value={Gender.OTHER}
+                    control={<Radio />}
+                    label="Other"
+                  />
+                </RadioGroup>
+              )}
+            />
           </div>
           <div className="flex gap-2 mb-5">
-            <Button onClick={handleReset} className="w-1/2">
+            <Button type="button" onClick={handleReset} className="w-1/2">
               RESET
             </Button>
-            <Button onClick={handleSubmit(onSubmit)} className="w-1/2">
-              SUBMIT
+            <Button
+              type="submit"
+              className="w-1/2"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? "LOADING..." : "SUBMIT"}
             </Button>
           </div>
         </div>
@@ -171,7 +217,7 @@ export const Register = () => {
             className="max-w-full w-full h-50 xl:h-full object-contain"
           />
         </div>
-      </div>
+      </form>
     </FormProvider>
   );
 };

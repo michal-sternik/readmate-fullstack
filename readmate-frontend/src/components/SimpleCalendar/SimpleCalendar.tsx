@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { CalendarNavigation } from "../CalendarNavigation/CalendarNavigation";
-import { formatDate, getBooksInWeek } from "../../lib/utils";
+import {
+  formatDate,
+  generateSkeletonBooksForWeek,
+  getBooksInWeek,
+} from "../../lib/utils";
 import { Button } from "../Button/Button";
-import { mockBooks } from "../../lib/constants";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import useSWR from "swr";
+import { BookService } from "../../api/services/bookService";
+import { RootState } from "../../redux/store";
+import { CallendarBook } from "../../types/booktypes";
+import Skeleton from "react-loading-skeleton";
 
 const colStartClasses: Record<number, string> = {
   1: "col-start-1",
@@ -37,12 +47,31 @@ const colSpanClasses: Record<number, string> = {
   13: "col-span-13",
   14: "col-span-14",
 };
+const swrConfig = {
+  revalidateOnFocus: true,
+  revalidateOnReconnect: false,
+  dedupingInterval: 60000,
+};
 
 export const SimpleCalendar = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user.user);
   const [actualDate, setActualDate] = useState(new Date());
   const [actual7DaysRange, setActual7DaysRange] = useState<
     { date: Date; isCurrentMonth: boolean }[]
   >([]);
+
+  const {
+    data: books,
+    error,
+    isLoading,
+  } = useSWR<CallendarBook[] | undefined>(
+    user
+      ? `/book/calendar?month=${actualDate.getMonth()}&year=${actualDate.getFullYear()}`
+      : null,
+    BookService.getCalendar,
+    swrConfig
+  );
 
   const get7DayRange = (centerDate: Date) => {
     const start = new Date(centerDate);
@@ -77,11 +106,6 @@ export const SimpleCalendar = () => {
     " " +
     actualDate.toLocaleString("default", { year: "numeric" });
 
-  const books =
-    actual7DaysRange.length === 7
-      ? getBooksInWeek(actual7DaysRange, mockBooks)
-      : [];
-
   return (
     <div className="grow min-h-[200px] lg:min-h-0 bg-white/90 shadow-[0px_1px_14px_0px_rgba(0,0,0,0.3)] rounded-4xl flex flex-col  p-4">
       <div className="flex w-full flex-row justify-between items-center lg:px-5">
@@ -98,7 +122,12 @@ export const SimpleCalendar = () => {
           </span>
         </div>
 
-        <Button className="px-1 py-1! ml-1">Expand</Button>
+        <Button
+          onClick={() => navigate("calendar")}
+          className="px-1 py-1! ml-1"
+        >
+          Expand
+        </Button>
       </div>
 
       <div className="flex flex-col flex-grow">
@@ -115,26 +144,40 @@ export const SimpleCalendar = () => {
 
         <div className="h-full grid grid-cols-7 border rounded-4xl overflow-y-hidden  divide-x-1 relative  ">
           <div className="custom-scroll px-1 max-h-[100%] p-5 gap-px overflow-y-auto grid grid-cols-14 bg-transparent absolute w-full  text-[8px] md:text-xs">
-            {books.map(
-              (book, idx) =>
-                book && (
-                  <div
-                    key={idx}
-                    className={`${colStartClasses[book.start!]} ${
-                      colSpanClasses[book.span!]
-                    } ${
-                      book.color
-                    } rounded-4xl text-sm lg:text-lg text-center text-nowrap custom-scroll overflow-auto`}
-                  >
-                    {book?.title}
-                  </div>
-                )
-            )}
+            {actual7DaysRange.length === 7 &&
+              !error &&
+              (isLoading
+                ? generateSkeletonBooksForWeek()
+                : books
+                ? getBooksInWeek(actual7DaysRange, books)
+                : []
+              ).map((book, idx) => {
+                const isSkeleton = isLoading || !("color" in book);
+                const colStart = colStartClasses[book.start!];
+                const colSpan = colSpanClasses[book.span!];
+                if (isSkeleton) {
+                  return (
+                    <div key={idx} className={`${colStart} ${colSpan}`}>
+                      <Skeleton className="rounded-xl h-5" />
+                    </div>
+                  );
+                } else {
+                  const calendarBook = book as CallendarBook;
+                  return (
+                    <div
+                      key={idx}
+                      className={`${colStart} ${colSpan} ${book.color!} rounded-4xl text-sm lg:text-lg text-center text-nowrap custom-scroll overflow-auto`}
+                    >
+                      {calendarBook.title}
+                    </div>
+                  );
+                }
+              })}
           </div>
           {actual7DaysRange.map((day, dayIdx) => (
             <div
               key={`day-${dayIdx}`}
-              className={`min-h-30 md:min-h-40 flex-1 flex flex-col ${
+              className={`min-h-30 md:min-h-30 flex-1 flex flex-col ${
                 day.isCurrentMonth ? "" : "text-gray-400"
               } 
                         

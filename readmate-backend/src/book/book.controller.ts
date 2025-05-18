@@ -114,7 +114,7 @@ export class BookController {
       //eslint disabled to make it easier to undestand the condition
       // eslint-disable-next-line prettier/prettier
       request.user.role === Role.ADMIN && userId ? userId : request.user.id;
-    console.log(targetUserId);
+
     return this.bookService.getUserBookListPaginated(
       targetUserId,
       page,

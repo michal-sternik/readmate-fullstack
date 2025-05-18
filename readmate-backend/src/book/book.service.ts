@@ -8,7 +8,7 @@ import { CreateBookDto } from './dtos/createbook.dto';
 import { UserBookService } from 'src/user-book/user-book.service';
 import { BookWithDates } from './types/bookwithdates.type';
 import { EditReadDatesDto } from './dtos/editreaddates.dto';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { ExploreBookDto } from './dtos/explorebook.dto';
 import { GoogleBooksItem } from './types/googlebook.type';
 
@@ -40,10 +40,8 @@ export class BookService {
     const newUserBook = await this.userBookService.connectUserToBook(
       userId,
       book,
-      dayjs(createBookDto.startDate).toISOString(),
-      createBookDto.endDate
-        ? dayjs(createBookDto.endDate).toISOString()
-        : undefined,
+      createBookDto.startDate,
+      createBookDto.endDate ? createBookDto.endDate : undefined,
     );
 
     return { bookId: newUserBook.bookId };
@@ -119,7 +117,7 @@ export class BookService {
     }, 0);
 
     return {
-      numbersOfBookRead: booksReadThisYear.length,
+      numberOfBooksRead: booksReadThisYear.length,
       hoursRead: Math.round(hoursRead / 60),
     };
   }

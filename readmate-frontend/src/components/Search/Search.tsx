@@ -1,64 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Flag from "react-world-flags";
 import DoneIcon from "@mui/icons-material/Done";
-// import MUIToggler from "../MUIToggler/MUIToggler"
-// import { AuthContext } from "../../context/AuthProvider"
-// import { ReactComponent as Icon } from '../../static/svg/logout.svg'
+import { useDebounce } from "../../hooks/useDebounce";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { changeSearchPhrase, restrictLanguage } from "../../redux/exploreSlice";
 
 export const Search = () => {
+  const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
-  // const [startIndex, setStartIndex] = useState(0);
-  const [languageTogglerChecked, setLanguageTogglerChecked] =
-    useState<boolean>(false);
+
+  const debouncedSearch = useDebounce(searchQuery);
+  const languageTogglerChecked = useSelector(
+    (state: RootState) => state.searchInput.langRestrict
+  );
   const [showInputOptions, setShowInputOptions] = useState(false);
 
   const navigate = useNavigate();
-
-  // const handleLogout = async () => {};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  // const handleTogglerChange = () => {
-  //   setTogglerChecked(!togglerChecked);
-  // };
-
   const handleInputOptionsVisibility = () => {
     setShowInputOptions(true);
     navigate("explore");
   };
+  useEffect(() => {
+    dispatch(changeSearchPhrase({ searchPhrase: debouncedSearch }));
+  }, [debouncedSearch, dispatch]);
 
-  // const resetToggler = () => setTogglerChecked(false);
-
-  //   useEffect(() => {
-  //     setStartIndex(actualPage * 9 - 9)
-  //     if (togglerChecked) {
-  //       axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=9&startIndex=${startIndex}&langRestrict=pl`)
-  //         .then(data => setBookList(data.data.items))
-  //     } else {
-  //       axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=9&startIndex=${startIndex}`)
-  //         .then(data => setBookList(data.data.items))
-  //     }
-  //   }, [actualPage, togglerChecked])
-
-  //   useEffect(() => {
-  //     resetToggler()
-  //     setIsTyping(true)
-  //     const timer = setTimeout(() => {
-  //       axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=9&startIndex=${startIndex}`)
-  //         .then(data => setBookList(data.data.items))
-  //       setIsTyping(false)
-  //     }, 400)
-
-  //     return () => clearTimeout(timer)
-  //   }, [searchQuery])
-  // const typing = searchQuery.length > 0;
   return (
     <div className="flex w-full flex-row justify-around items-center grow">
       <div className="flex flex-col justify-center items-center h-full w-full">
-        {/* Input */}
+        {/* input */}
         <div
           className={`w-full h-10 flex items-center rounded-4xl ${
             showInputOptions ? "rounded-b-none" : "rounded-4xl"
@@ -74,7 +50,7 @@ export const Search = () => {
           />
         </div>
 
-        {/* Input Options */}
+        {/*input options */}
         <div
           className={`w-full h-10 flex items-center justify-start transition-all duration-300 font-semibold 
             ${
@@ -85,7 +61,11 @@ export const Search = () => {
             rounded-b-4xl bg-white/50 `}
         >
           <button
-            onClick={() => setLanguageTogglerChecked(!languageTogglerChecked)}
+            onClick={() =>
+              dispatch(
+                restrictLanguage({ langRestrict: !languageTogglerChecked })
+              )
+            }
             className={`transition-all duration-300 cursor-pointer h-7/10 w-auto px-5 gap-2 flex flex-row justify-evenly items-center ml-[4%] ${
               languageTogglerChecked ? "bg-purple-500/50" : "bg-white/50"
             } opacity-90 border border-[#ABABAB] rounded-4xl`}
@@ -104,6 +84,26 @@ export const Search = () => {
               } overflow-hidden flex items-center`}
             >
               <DoneIcon />
+            </div>
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="relative  group"
+              tabIndex={0}
+            >
+              <div className="w-[16px] h-[16px] bg-gray-500 rounded-full flex items-center justify-center text-white text-[10px] font-bold cursor-pointer">
+                i
+              </div>
+
+              <div
+                className="absolute z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 
+                  bg-black text-white text-xs px-2 py-1 rounded-md shadow-md 
+                  whitespace-nowrap opacity-0 pointer-events-none 
+                  group-hover:opacity-100 group-focus:opacity-100 
+                  group-hover:pointer-events-auto group-focus:pointer-events-auto 
+                  transition duration-200"
+              >
+                Language content may not be accurate
+              </div>
             </div>
           </button>
         </div>

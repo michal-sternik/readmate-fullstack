@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { Gender } from '../enums/gender.enum';
 
 export class RegisterDto {
   @ApiProperty({
@@ -23,6 +30,16 @@ export class RegisterDto {
   })
   @MinLength(8)
   password: string;
+
+  @ApiProperty({
+    description: 'Gender - must be one of the values in Gender enum',
+    enum: Gender,
+    example: Gender.MALE,
+  })
+  @IsEnum(Gender, {
+    message: 'gender must be one of: ' + Object.values(Gender).join(', '),
+  })
+  gender: Gender;
 
   @ApiProperty({
     description: 'Confirm password - must be equal to password',

@@ -11,11 +11,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     private config: ConfigService,
     private authService: AuthService,
   ) {
-    console.log(
-      'JWT_SECRET z ConfigServicef:',
-      config.get<string>('JWT_SECRET'),
-    );
-
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: config.get<string>('JWT_SECRET') as string,
@@ -23,7 +18,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
   async validate(payload: AuthJwtPayload) {
-    console.log('payload', payload);
     const userId = payload.sub;
     //we can return something from validateJwtUser (for example email) if needed
     return this.authService.validateJwtUser(userId);

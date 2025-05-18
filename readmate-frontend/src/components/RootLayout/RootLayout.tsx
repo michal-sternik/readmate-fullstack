@@ -2,10 +2,25 @@ import { Outlet } from "react-router-dom";
 import { Sidebar } from "../Sidebar/Sidebar";
 import { Search } from "../Search/Search";
 import { DarkmodeButton } from "../DarkmodeButton/DarkmodeButton";
+import { useEffect } from "react";
+import { RootState, useAppDispatch } from "../../redux/store";
+import { fetchUserProfile } from "../../redux/userSlice";
+import { useSelector } from "react-redux";
+import { CircularProgress } from "@mui/material";
 
 export const RootLayout = () => {
   const typing = false;
   const darkMode = false;
+
+  const dispatch = useAppDispatch();
+  const loading = useSelector((state: RootState) => state.user.loading);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch]);
+
   return (
     <div className="relative min-h-screen">
       <div
@@ -30,7 +45,13 @@ export const RootLayout = () => {
             </div>
           </div>
           <div className="overflow-hidden p-5 gap-3 flex flex-col text-black bg-white/50 lg:backdrop-blur-sm w-full h-full rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
-            <Outlet />
+            {loading ? (
+              <div className="text-[#A449FF] text-[100px] h-full  justify-center flex items-center font-bold">
+                <CircularProgress size={100} />
+              </div>
+            ) : (
+              <Outlet />
+            )}
           </div>
         </div>
       </div>

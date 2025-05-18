@@ -22,4 +22,7 @@ export class UserBook {
 
   @Column({ type: 'date', nullable: true })
   endDate?: string | null;
+
+  @Column({ type: 'timestamp' })
+  createdAt: string;
 }

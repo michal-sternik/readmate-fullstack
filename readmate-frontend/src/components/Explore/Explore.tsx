@@ -1,68 +1,68 @@
 import { useEffect, useState } from "react";
 
-import { exploreMockBooks } from "../../lib/constants";
-import defaultImage from "../../assets/images/defaultimgcover.jpg";
+import { MAX_RESULTS_PER_EXPLORE_PAGE } from "../../lib/constants";
 
 import { BookList } from "../BookList/BookList";
 import { Pagination } from "../Pagination/Pagination";
 import { ExploreBook } from "../../types/booktypes";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../Button/Button";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { BookService } from "../../api/services/bookService";
+import useSWR from "swr";
 
-const books = {
-  items: exploreMockBooks.items.map(
-    (book): ExploreBook => ({
-      id: book.id,
-
-      title: book.volumeInfo.title,
-      authors:
-        typeof book.volumeInfo.authors === "undefined"
-          ? book.volumeInfo.publisher
-            ? [book.volumeInfo.publisher]
-            : ["Unknown Author"]
-          : book.volumeInfo.authors,
-      publishedDate: book.volumeInfo.publishedDate
-        ? new Date(book.volumeInfo.publishedDate)
-        : undefined,
-      link: book.volumeInfo.infoLink,
-      categories:
-        typeof book.volumeInfo.categories === "undefined"
-          ? ["Other"]
-          : book.volumeInfo.categories,
-      imageLink:
-        typeof book.volumeInfo.imageLinks === "undefined"
-          ? defaultImage
-          : book.volumeInfo.imageLinks.thumbnail ?? defaultImage,
-      description: book.volumeInfo.description,
-      pageCount: book.volumeInfo.pageCount,
-    })
-  ),
+const swrConfig = {
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+  dedupingInterval: 60000,
 };
 
 export const Explore = () => {
   const navigate = useNavigate();
   const [showPagination, setShowPagination] = useState(false);
-  //   const [currentBook, setCurrentBook] = useState<Book>({})
-  //   const [formVisibility, setFormVisibility] = useState<'visible' | 'hidden'>('hidden')
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
+  const searchPhrase = useSelector(
+    (state: RootState) => state.searchInput.searchPhrase
+  );
+  const langRestrict = useSelector(
+    (state: RootState) => state.searchInput.langRestrict
+  );
+
+  const {
+    data: books,
+    error,
+    isLoading,
+  } = useSWR<ExploreBook[] | undefined>(
+    searchPhrase
+      ? `/book/search?searchQuery=${searchPhrase}&startIndex=${currentPage}&maxResults=${MAX_RESULTS_PER_EXPLORE_PAGE}${
+          langRestrict ? "&langRestrict=true" : ""
+        }`
+      : null,
+    BookService.searchBookBySearchPhrase,
+    swrConfig
+  );
 
   useEffect(() => {
-    if (books.items.length !== 0) {
+    if (books) {
       setShowPagination(true);
     }
-  }, []);
+  }, [books]);
 
-  //   const toggleFormVisibility = () => {
-  //     setFormVisibility((prev) => (prev === 'hidden' ? 'visible' : 'hidden'))
-  //   }
+  const handlePageChange = (direction: -1 | 1) => {
+    setCurrentPage(currentPage + direction);
+  };
 
   return (
     <div className="w-full h-full flex flex-col gap-5 ">
-      <BookList
-        bookList={books.items}
-        // typing={typing}
-        // toggleFormVisibility={toggleFormVisibility}
-        // setCurrentBook={setCurrentBook}
-      />
+      {error ? (
+        <div className="text-red-600 text-lg font-bold">
+          Error loading books. Please try again later.
+        </div>
+      ) : (
+        <BookList bookList={books} isLoading={isLoading} />
+      )}
 
       <div className=" flex items-center pt-5 lg:pt-0">
         <div className="flex flex-row items-center justify-start w-full gap-2">
@@ -77,7 +77,10 @@ export const Explore = () => {
           </Button>
         </div>
         {showPagination && (
-          <Pagination handlePageChange={() => {}} actualPage={1} />
+          <Pagination
+            handlePageChange={handlePageChange}
+            actualPage={currentPage + 1}
+          />
         )}
       </div>
 

@@ -12,11 +12,17 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Checkbox } from "@mui/material";
 import { Book } from "../../types/booktypes";
+import { BookService } from "../../api/services/bookService";
+import { convertAndDisplayError, formatFullDate } from "../../lib/utils";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { toast } from "react-toastify";
+import { mutate } from "swr";
 
 export const SingleBookDetails = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
-
+  const [book, setBook] = useState<Book>(state.book as Book);
   const {
     title,
     authors,
@@ -28,7 +34,7 @@ export const SingleBookDetails = () => {
     imageLink,
     startDate,
     endDate,
-  } = state.book as Book;
+  } = book as Book;
 
   const [dateFrom, setDateFrom] = useState<Dayjs | null>(
     startDate ? dayjs(startDate) : null
@@ -38,15 +44,102 @@ export const SingleBookDetails = () => {
   const [dateTo, setDateTo] = useState<Dayjs | null>(
     endDate ? dayjs(endDate) : null
   );
+  const [dateFromError, setDateFromError] = useState<string | null>(null);
+  const [dateToError, setDateToError] = useState<string | null>(null);
 
   //it'll be true if the user is currently reading the book, so only dateTo mattern
   const [currentlyReading, setCurrentlyReading] = useState<boolean>(!dateTo);
+  const user = useSelector((state: RootState) => state.user.user);
 
   if (!state?.book) {
     return <div>No book data available.</div>;
   }
 
-  console.log(dateFrom, endDate);
+  const validateForm = () => {
+    let valid = true;
+    if (!dateFrom) {
+      setDateFromError("Start date cannot be empty.");
+      valid = false;
+    }
+    if (dateTo && dateFrom && dayjs(dateTo).isBefore(dayjs(dateFrom))) {
+      setDateToError("End date cannot be earlier than start date.");
+      valid = false;
+    }
+    return valid;
+  };
+
+  const handleAddBook = async () => {
+    const bookToAdd = {
+      ...state.book,
+      startDate: dayjs(dateFrom).format("YYYY-MM-DD"),
+      endDate:
+        !currentlyReading && dateTo ? dayjs(dateTo).format("YYYY-MM-DD") : null,
+    };
+    setBook((prev) => ({
+      ...prev,
+      startDate: dateFrom!.toDate(),
+      endDate: !currentlyReading && dateTo ? dateTo.toDate() : prev.endDate,
+    }));
+    try {
+      await BookService.addBook(bookToAdd);
+      mutate(
+        (key) => typeof key === "string" && key.startsWith("/book/calendar")
+      );
+      toast.success("Book added successfully!");
+    } catch (error) {
+      convertAndDisplayError(error);
+    }
+  };
+
+  const handleEditBook = async () => {
+    const bookToEdit = {
+      startDate: dayjs(dateFrom).format("YYYY-MM-DD"),
+      endDate:
+        !currentlyReading && dateTo ? dayjs(dateTo).format("YYYY-MM-DD") : null,
+    };
+
+    try {
+      await BookService.editBook(state.book.id, bookToEdit);
+      mutate(
+        (key) => typeof key === "string" && key.startsWith("/book/calendar")
+      );
+      toast.success("Book edited successfully!");
+    } catch (error) {
+      convertAndDisplayError(error);
+    }
+  };
+
+  const handleDateFromChange = (newValue: Dayjs | null) => {
+    setDateFrom(newValue);
+
+    if (!newValue) {
+      setDateFromError("Start date cannot be empty.");
+    } else if (newValue.isAfter(dayjs(), "day")) {
+      setDateFromError("Start date cannot be in the future.");
+    } else {
+      setDateFromError(null);
+    }
+
+    if (dateTo && newValue && dayjs(dateTo).isBefore(dayjs(newValue))) {
+      setDateToError("End date cannot be earlier than start date.");
+    } else if (dateTo && dateTo.isAfter(dayjs(), "day")) {
+      setDateToError("End date cannot be in the future.");
+    } else {
+      setDateToError(null);
+    }
+  };
+
+  const handleDateToChange = (newValue: Dayjs | null) => {
+    setDateTo(newValue);
+
+    if (newValue && dateFrom && dayjs(newValue).isBefore(dayjs(dateFrom))) {
+      setDateToError("End date cannot be earlier than start date.");
+    } else if (newValue && newValue.isAfter(dayjs(), "day")) {
+      setDateToError("End date cannot be in the future.");
+    } else {
+      setDateToError(null);
+    }
+  };
   return (
     <>
       <div className="flex flex-col-reverse xl:flex-row h-full min-h-145 lg:min-h-auto w-full gap-10 lg:gap-5">
@@ -65,11 +158,13 @@ export const SingleBookDetails = () => {
               />
               <CustomChip
                 icon={<EventNoteIcon />}
-                label={`${
-                  publishedDate
-                    ? publishedDate.toLocaleDateString()
+                label={
+                  publishedDate instanceof Date
+                    ? formatFullDate(publishedDate)
+                    : publishedDate
+                    ? publishedDate
                     : "Date unknown"
-                }`}
+                }
               />
               <CustomChip
                 icon={<CategoryIcon />}
@@ -90,9 +185,14 @@ export const SingleBookDetails = () => {
                 <DatePicker
                   label="Start date"
                   value={dateFrom}
-                  onChange={(newValue) => setDateFrom(newValue)}
+                  onChange={handleDateFromChange}
                   slotProps={{
                     field: { clearable: true },
+                    textField: {
+                      required: true,
+                      error: !!dateFromError,
+                      helperText: dateFromError,
+                    },
                   }}
                   className="w-full"
                   disableFuture
@@ -100,9 +200,13 @@ export const SingleBookDetails = () => {
                 <DatePicker
                   label="End date"
                   value={dateTo}
-                  onChange={(newValue) => setDateTo(newValue)}
+                  onChange={handleDateToChange}
                   slotProps={{
                     field: { clearable: true },
+                    textField: {
+                      error: !!dateToError,
+                      helperText: dateToError,
+                    },
                   }}
                   disabled={currentlyReading}
                   className="w-full"
@@ -128,8 +232,24 @@ export const SingleBookDetails = () => {
             <Button onClick={() => navigate(-1)} className=" w-1/2 ">
               BACK
             </Button>
-            <Button className=" w-1/2 ">
-              {startDate ? "EDIT" : "ADD BOOK"}
+            <Button
+              className="w-1/2"
+              onClick={() => {
+                if (!user) {
+                  navigate("/login");
+                  return;
+                }
+                if (!validateForm() || dateFromError || dateToError) {
+                  return;
+                }
+                if (!startDate) {
+                  handleAddBook();
+                } else {
+                  handleEditBook();
+                }
+              }}
+            >
+              {!user ? "LOG IN TO ADD" : startDate ? "EDIT" : "ADD BOOK"}
             </Button>
           </div>
         </div>
@@ -158,11 +278,13 @@ export const SingleBookDetails = () => {
               />
               <CustomChip
                 icon={<EventNoteIcon />}
-                label={`${
-                  publishedDate
-                    ? publishedDate.toLocaleDateString()
+                label={
+                  publishedDate instanceof Date
+                    ? formatFullDate(publishedDate)
+                    : publishedDate
+                    ? publishedDate
                     : "Date unknown"
-                }`}
+                }
               />
               <CustomChip
                 icon={<CategoryIcon />}

@@ -1,49 +1,50 @@
-import { useForm, Controller, FormProvider } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { TextField } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
 import registerImage from "../../assets/images/register.png";
 
 import { Button } from "../Button/Button";
+import { UserService } from "../../api/services/userService";
+import { useNavigate } from "react-router-dom";
+import { fetchUserProfile } from "../../redux/userSlice";
+import { useAppDispatch } from "../../redux/store";
+import { convertAndDisplayError } from "../../lib/utils";
 
-import { toDateOrUndefined } from "../../lib/utils";
-
-type FormValues = {
+export type LoginFormValues = {
   email: string;
   password: string;
 };
 
-const initialFormValues: FormValues = {
+const initialFormValues: LoginFormValues = {
   email: "",
   password: "",
 };
 
 export const LogIn = () => {
-  const form = useForm<FormValues>({
+  const form = useForm<LoginFormValues>({
     defaultValues: {
       ...initialFormValues,
     },
   });
 
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const {
     register,
     handleSubmit,
-    control,
     reset,
 
     formState: { errors },
   } = form;
 
-  const onSubmit = (data: FormValues) => {
-    console.log("test");
-
-    const finalData: FormValues = {
-      ...data,
-    };
-
-    console.log("User logged in:", finalData);
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      await UserService.login(data);
+      dispatch(fetchUserProfile());
+      navigate("/");
+    } catch (error) {
+      convertAndDisplayError(error);
+    }
   };
 
   const handleReset = () => {
@@ -55,9 +56,12 @@ export const LogIn = () => {
 
   return (
     <FormProvider {...form}>
-      <div className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full">
+      <form
+        onClick={handleSubmit(onSubmit)}
+        className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full"
+      >
         <div className="flex flex-col w-full xl:w-1/2 h-full justify-between gap-5">
-          <div className="flex flex-col xl:mt-20 w-full gap-4 overflow-auto scrollbar-hide">
+          <div className="flex flex-col w-full gap-4 overflow-auto scrollbar-hide">
             <div className="text-2xl font-extrabold text-[#A449FF]">
               Log in to existing account
             </div>
@@ -88,11 +92,15 @@ export const LogIn = () => {
             />
           </div>
           <div className="flex gap-2 mb-5">
-            <Button onClick={handleReset} className="w-1/2">
+            <Button type="button" onClick={handleReset} className="w-1/2">
               RESET
             </Button>
-            <Button onClick={handleSubmit(onSubmit)} className="w-1/2">
-              SUBMIT
+            <Button
+              type="submit"
+              className="w-1/2"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? "LOADING..." : "SUBMIT"}
             </Button>
           </div>
         </div>
@@ -103,7 +111,7 @@ export const LogIn = () => {
             className="max-w-full w-full h-50 xl:h-full object-contain"
           />
         </div>
-      </div>
+      </form>
     </FormProvider>
   );
 };

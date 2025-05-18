@@ -20,6 +20,10 @@ import { AddCustomBook } from "./components/AddCustomBook/AddCustomBook";
 import { UserProfile } from "./components/UserProfile/UserProfile";
 import { Register } from "./components/Register/Register";
 import { LogIn } from "./components/LogIn/LogIn";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const router = createBrowserRouter(
@@ -40,8 +44,15 @@ function App() {
 
   return (
     <SkeletonTheme baseColor="#BBBBBB" highlightColor="#CCCCCC">
-      {/* <Toaster position="bottom-left" /> */}
-      <RouterProvider router={router} />
+      <Provider store={store}>
+        {/* <Toaster position="bottom-left" /> */}
+        <RouterProvider router={router} />
+        <ToastContainer
+          position="bottom-left"
+          theme="colored"
+          autoClose={2000}
+        />
+      </Provider>
     </SkeletonTheme>
   );
 }

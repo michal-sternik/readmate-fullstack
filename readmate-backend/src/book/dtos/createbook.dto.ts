@@ -23,6 +23,7 @@ export class CreateBookDto {
   @ApiProperty({ example: 300 })
   pageCount?: number;
 
+  @IsString()
   @ApiProperty({ example: '2025-05-14', type: 'string', format: 'date' })
   startDate: string;
 
@@ -39,4 +40,20 @@ export class CreateBookDto {
   @IsOptional()
   @ApiProperty({ example: ['Category1', 'Category2'] })
   categories?: string[] | null;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: 'https://example.com',
+    description: 'Link to the book',
+  })
+  link?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    example: 'https://example.com/image.jpg',
+    description: 'Link to the book image',
+  })
+  imageLink?: string | null;
 }

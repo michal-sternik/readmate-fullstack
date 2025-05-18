@@ -6,6 +6,8 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.setGlobalPrefix('api');
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -15,7 +17,9 @@ async function bootstrap() {
       },
     }),
   );
-
+  app.enableCors({
+    origin: 'http://localhost:5173',
+  });
   const config = new DocumentBuilder()
     .setTitle('Blog API')
     .setDescription('The blog API description')
