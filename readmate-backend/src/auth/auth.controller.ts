@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Post,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { RegisterDto } from './dtos/register.dto';
@@ -18,6 +19,7 @@ import {
   ApiCreatedResponse,
 } from '@nestjs/swagger';
 import { LoginDto } from './dtos/login.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -46,7 +48,24 @@ export class AuthController {
   @ApiOperation({ summary: 'Returns access token - signs in user' })
   @Post('login')
   @UseGuards(AuthGuard('local'))
-  login(@Req() request: { user: { id: number } }) {
-    return this.authService.login(request.user.id);
+  login(
+    @Req() request: { user: { id: number } },
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const accessToken = this.authService.login(request.user.id);
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 1000 * 60 * 60 * 24, // 1 dzień
+    });
+    return { message: 'User logged in' };
+  }
+  @ApiOperation({ summary: 'Clears access token - logs user out' })
+  @Post('logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('accessToken');
+    return { message: 'User logged out' };
   }
 }

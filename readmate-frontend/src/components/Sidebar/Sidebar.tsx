@@ -13,6 +13,8 @@ import { RootState, useAppDispatch } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { Gender } from "../../types/usertypes";
 import { clearUser } from "../../redux/userSlice";
+import { convertAndDisplayError } from "../../lib/utils";
+import { UserService } from "../../api/services/userService";
 
 export const Sidebar = () => {
   const navigate = useNavigate();
@@ -42,7 +44,13 @@ export const Sidebar = () => {
         ]
       : []),
   ];
-
+  const handleLogout = async () => {
+    try {
+      await UserService.logout();
+    } catch (error) {
+      convertAndDisplayError(error);
+    }
+  };
   return (
     <div className="h-full w-full lg:min-w-[250px] lg:max-w-[400px] flex justify-center items-center ">
       <div className="w-full h-full flex gap-5 lg:gap-0 flex-col items-center bg-white/10 shadow-[0_0_40px_rgba(0,0,0,0.3)] lg:backdrop-blur-sm rounded-4xl border border-white/20">
@@ -94,7 +102,7 @@ export const Sidebar = () => {
                 <IconButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    localStorage.removeItem("token");
+                    handleLogout();
                     dispatch(clearUser());
                     navigate("/login");
                   }}
