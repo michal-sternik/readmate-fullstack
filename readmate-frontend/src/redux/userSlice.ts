@@ -20,16 +20,8 @@ export const fetchUserProfile = createAsyncThunk<User>(
   "user/fetchUserProfile",
   async (_, { rejectWithValue }) => {
     try {
-      //   const token = localStorage.getItem("token");
       const response = await UserService.getUserProfile();
-      //   await axios.get(
-      // `${API_BASE_URL}/user/profile`
-      //     {
-      //     headers: {
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //   }
-      //   );
+
       return response as User;
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
