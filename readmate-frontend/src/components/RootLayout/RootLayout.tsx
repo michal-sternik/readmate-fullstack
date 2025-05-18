@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { RootState, useAppDispatch } from "../../redux/store";
 import { fetchUserProfile } from "../../redux/userSlice";
 import { useSelector } from "react-redux";
+import { CircularProgress } from "@mui/material";
 
 export const RootLayout = () => {
   const typing = false;
@@ -45,8 +46,8 @@ export const RootLayout = () => {
           </div>
           <div className="overflow-hidden p-5 gap-3 flex flex-col text-black bg-white/50 lg:backdrop-blur-sm w-full h-full rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
             {loading ? (
-              <div className="text-[#A449FF] text-[100px] text-center  font-bold">
-                Loading...
+              <div className="text-[#A449FF] text-[100px] h-full  justify-center flex items-center font-bold">
+                <CircularProgress size={100} />
               </div>
             ) : (
               <Outlet />

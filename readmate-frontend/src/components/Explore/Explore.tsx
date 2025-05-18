@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 
-import {
-  exploreMockBooks,
-  MAX_RESULTS_PER_EXPLORE_PAGE,
-} from "../../lib/constants";
-import defaultImage from "../../assets/images/defaultimgcover.jpg";
+import { MAX_RESULTS_PER_EXPLORE_PAGE } from "../../lib/constants";
 
 import { BookList } from "../BookList/BookList";
 import { Pagination } from "../Pagination/Pagination";
@@ -15,36 +11,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { BookService } from "../../api/services/bookService";
 import useSWR from "swr";
-
-const books = {
-  items: exploreMockBooks.items.map(
-    (book): ExploreBook => ({
-      id: book.id,
-
-      title: book.volumeInfo.title,
-      authors:
-        typeof book.volumeInfo.authors === "undefined"
-          ? book.volumeInfo.publisher
-            ? [book.volumeInfo.publisher]
-            : ["Unknown Author"]
-          : book.volumeInfo.authors,
-      publishedDate: book.volumeInfo.publishedDate
-        ? new Date(book.volumeInfo.publishedDate)
-        : undefined,
-      link: book.volumeInfo.infoLink,
-      categories:
-        typeof book.volumeInfo.categories === "undefined"
-          ? ["Other"]
-          : book.volumeInfo.categories,
-      imageLink:
-        typeof book.volumeInfo.imageLinks === "undefined"
-          ? defaultImage
-          : book.volumeInfo.imageLinks.thumbnail ?? defaultImage,
-      description: book.volumeInfo.description,
-      pageCount: book.volumeInfo.pageCount,
-    })
-  ),
-};
 
 const swrConfig = {
   revalidateOnFocus: false,
@@ -77,8 +43,6 @@ export const Explore = () => {
     BookService.searchBookBySearchPhrase,
     swrConfig
   );
-  //   const [currentBook, setCurrentBook] = useState<Book>({})
-  //   const [formVisibility, setFormVisibility] = useState<'visible' | 'hidden'>('hidden')
 
   useEffect(() => {
     if (books) {
@@ -86,9 +50,6 @@ export const Explore = () => {
     }
   }, [books]);
 
-  //   const toggleFormVisibility = () => {
-  //     setFormVisibility((prev) => (prev === 'hidden' ? 'visible' : 'hidden'))
-  //   }
   const handlePageChange = (direction: -1 | 1) => {
     setCurrentPage(currentPage + direction);
   };

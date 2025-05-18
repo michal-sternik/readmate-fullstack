@@ -6,14 +6,11 @@ import { useDebounce } from "../../hooks/useDebounce";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { changeSearchPhrase, restrictLanguage } from "../../redux/exploreSlice";
-// import MUIToggler from "../MUIToggler/MUIToggler"
-// import { AuthContext } from "../../context/AuthProvider"
-// import { ReactComponent as Icon } from '../../static/svg/logout.svg'
 
 export const Search = () => {
   const dispatch = useDispatch();
   const [searchQuery, setSearchQuery] = useState("");
-  // const [startIndex, setStartIndex] = useState(0);
+
   const debouncedSearch = useDebounce(searchQuery);
   const languageTogglerChecked = useSelector(
     (state: RootState) => state.searchInput.langRestrict
@@ -22,15 +19,9 @@ export const Search = () => {
 
   const navigate = useNavigate();
 
-  // const handleLogout = async () => {};
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
-
-  // const handleTogglerChange = () => {
-  //   setTogglerChecked(!togglerChecked);
-  // };
 
   const handleInputOptionsVisibility = () => {
     setShowInputOptions(true);
@@ -40,35 +31,10 @@ export const Search = () => {
     dispatch(changeSearchPhrase({ searchPhrase: debouncedSearch }));
   }, [debouncedSearch, dispatch]);
 
-  // const resetToggler = () => setTogglerChecked(false);
-
-  //   useEffect(() => {
-  //     setStartIndex(actualPage * 9 - 9)
-  //     if (togglerChecked) {
-  //       axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=9&startIndex=${startIndex}&langRestrict=pl`)
-  //         .then(data => setBookList(data.data.items))
-  //     } else {
-  //       axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=9&startIndex=${startIndex}`)
-  //         .then(data => setBookList(data.data.items))
-  //     }
-  //   }, [actualPage, togglerChecked])
-
-  //   useEffect(() => {
-  //     resetToggler()
-  //     setIsTyping(true)
-  //     const timer = setTimeout(() => {
-  //       axios.get(`https://www.googleapis.com/books/v1/volumes?q=${searchQuery}&maxResults=9&startIndex=${startIndex}`)
-  //         .then(data => setBookList(data.data.items))
-  //       setIsTyping(false)
-  //     }, 400)
-
-  //     return () => clearTimeout(timer)
-  //   }, [searchQuery])
-  // const typing = searchQuery.length > 0;
   return (
     <div className="flex w-full flex-row justify-around items-center grow">
       <div className="flex flex-col justify-center items-center h-full w-full">
-        {/* Input */}
+        {/* input */}
         <div
           className={`w-full h-10 flex items-center rounded-4xl ${
             showInputOptions ? "rounded-b-none" : "rounded-4xl"
@@ -84,7 +50,7 @@ export const Search = () => {
           />
         </div>
 
-        {/* Input Options */}
+        {/*input options */}
         <div
           className={`w-full h-10 flex items-center justify-start transition-all duration-300 font-semibold 
             ${

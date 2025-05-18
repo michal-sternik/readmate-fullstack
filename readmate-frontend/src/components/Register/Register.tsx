@@ -9,7 +9,7 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import registerImage from "../../assets/images/register.png";
 
 import { Button } from "../Button/Button";
@@ -56,6 +56,7 @@ export const Register = () => {
   } = form;
 
   const onSubmit = async (data: RegisterFormValues) => {
+    console.log(data);
     try {
       const payload = {
         ...data,
@@ -74,10 +75,13 @@ export const Register = () => {
   const handleReset = () => {
     reset(initialFormValues);
   };
-
+  console.log(form.getValues());
   return (
     <FormProvider {...form}>
-      <div className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full"
+      >
         <div className="flex flex-col w-full xl:w-1/2 h-full justify-between gap-5">
           <div className="flex flex-col w-full gap-4 overflow-auto scrollbar-hide">
             <div className="text-2xl font-extrabold text-[#A449FF]">
@@ -145,7 +149,7 @@ export const Register = () => {
                     {...field}
                     label="Birth Date"
                     value={field.value ? dayjs(field.value) : null}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={(date) => field.onChange(date ? date : null)}
                     disableFuture
                     slotProps={{
                       textField: {
@@ -194,11 +198,11 @@ export const Register = () => {
             />
           </div>
           <div className="flex gap-2 mb-5">
-            <Button onClick={handleReset} className="w-1/2">
+            <Button type="button" onClick={handleReset} className="w-1/2">
               RESET
             </Button>
             <Button
-              onClick={handleSubmit(onSubmit)}
+              type="submit"
               className="w-1/2"
               disabled={form.formState.isSubmitting}
             >
@@ -213,7 +217,7 @@ export const Register = () => {
             className="max-w-full w-full h-50 xl:h-full object-contain"
           />
         </div>
-      </div>
+      </form>
     </FormProvider>
   );
 };

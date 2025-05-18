@@ -17,6 +17,7 @@ import { convertAndDisplayError, formatFullDate } from "../../lib/utils";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from "react-toastify";
+import { mutate } from "swr";
 
 export const SingleBookDetails = () => {
   const navigate = useNavigate();
@@ -81,6 +82,9 @@ export const SingleBookDetails = () => {
     }));
     try {
       await BookService.addBook(bookToAdd);
+      mutate(
+        (key) => typeof key === "string" && key.startsWith("/book/calendar")
+      );
       toast.success("Book added successfully!");
     } catch (error) {
       convertAndDisplayError(error);
@@ -96,6 +100,9 @@ export const SingleBookDetails = () => {
 
     try {
       await BookService.editBook(state.book.id, bookToEdit);
+      mutate(
+        (key) => typeof key === "string" && key.startsWith("/book/calendar")
+      );
       toast.success("Book edited successfully!");
     } catch (error) {
       convertAndDisplayError(error);

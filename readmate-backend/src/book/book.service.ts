@@ -117,7 +117,7 @@ export class BookService {
     }, 0);
 
     return {
-      numbersOfBookRead: booksReadThisYear.length,
+      numberOfBooksRead: booksReadThisYear.length,
       hoursRead: Math.round(hoursRead / 60),
     };
   }

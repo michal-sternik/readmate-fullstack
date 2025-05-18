@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import NavIcon from "../../assets/svg/nav-arrow.svg?react";
 
 type PaginationProps = {

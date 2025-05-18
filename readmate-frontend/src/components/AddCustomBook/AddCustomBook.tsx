@@ -24,6 +24,7 @@ import { convertAndDisplayError, toDateOrUndefined } from "../../lib/utils";
 import { BookService } from "../../api/services/bookService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { mutate } from "swr";
 
 type FormValues = {
   title: string;
@@ -84,6 +85,9 @@ export const AddCustomBook = () => {
     try {
       await BookService.addBook(finalData);
       toast.success("Book added successfully!");
+      mutate(
+        (key) => typeof key === "string" && key.startsWith("/book/calendar")
+      );
       navigate("/profile");
     } catch (error) {
       convertAndDisplayError(error);

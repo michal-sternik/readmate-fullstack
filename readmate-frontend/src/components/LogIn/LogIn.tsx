@@ -32,7 +32,6 @@ export const LogIn = () => {
   const {
     register,
     handleSubmit,
-    control,
     reset,
 
     formState: { errors },
@@ -57,7 +56,10 @@ export const LogIn = () => {
 
   return (
     <FormProvider {...form}>
-      <div className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full">
+      <form
+        onClick={handleSubmit(onSubmit)}
+        className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full"
+      >
         <div className="flex flex-col w-full xl:w-1/2 h-full justify-between gap-5">
           <div className="flex flex-col w-full gap-4 overflow-auto scrollbar-hide">
             <div className="text-2xl font-extrabold text-[#A449FF]">
@@ -90,11 +92,11 @@ export const LogIn = () => {
             />
           </div>
           <div className="flex gap-2 mb-5">
-            <Button onClick={handleReset} className="w-1/2">
+            <Button type="button" onClick={handleReset} className="w-1/2">
               RESET
             </Button>
             <Button
-              onClick={handleSubmit(onSubmit)}
+              type="submit"
               className="w-1/2"
               disabled={form.formState.isSubmitting}
             >
@@ -109,7 +111,7 @@ export const LogIn = () => {
             className="max-w-full w-full h-50 xl:h-full object-contain"
           />
         </div>
-      </div>
+      </form>
     </FormProvider>
   );
 };

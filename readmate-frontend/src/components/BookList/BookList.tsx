@@ -1,9 +1,6 @@
-import React from "react";
 import { SingleBook } from "../SingleBook/SingleBook";
 import { ExploreBook } from "../../types/booktypes";
 import { SingleBookSkeleton } from "../Skeletons/SingleBookSkeleon";
-
-// import ExploreSkeleton from "../Skeletons/ExploreSkeleton/ExploreSkeleton";
 
 type BookListProps = {
   bookList: ExploreBook[] | undefined;
@@ -20,14 +17,7 @@ export const BookList = ({ bookList, isLoading }: BookListProps) => {
           Nothing found. Search for books.
         </span>
       ) : (
-        bookList.map((book) => (
-          <SingleBook
-            key={book.id}
-            book={book}
-            //   toggleFormVisibility={toggleFormVisibility}
-            //   setCurrentBook={setCurrentBook}
-          />
-        ))
+        bookList.map((book) => <SingleBook key={book.id} book={book} />)
       )}
     </div>
   );

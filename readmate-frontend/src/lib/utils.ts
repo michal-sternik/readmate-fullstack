@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Book, CallendarBook } from "../types/booktypes";
+import { Book, CallendarBook, SkeletonCalendarBook } from "../types/booktypes";
 import { WEEKSPLIT, WEEKDURATION } from "./constants";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
@@ -141,4 +141,20 @@ export const convertAndDisplayError = (e: unknown) => {
   }
 
   toast.error(message);
+};
+
+export const generateSkeletonBooksForWeek = (): SkeletonCalendarBook[] => {
+  const numberOfSkeletonBooks = Math.floor(Math.random() * 3) + 1; // 1–3 książki
+  const skeletonBooks: SkeletonCalendarBook[] = [];
+
+  for (let i = 0; i < numberOfSkeletonBooks; i++) {
+    const start = Math.floor(Math.random() * 8) + 1; // od 1 do 8
+    const span = Math.floor(Math.random() * (14 - start)) + 1;
+    skeletonBooks.push({
+      start,
+      span,
+    });
+  }
+
+  return skeletonBooks;
 };

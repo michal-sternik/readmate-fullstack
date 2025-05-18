@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { API_BASE_URL } from "../lib/constants";
 import axios from "axios";
 import { User } from "../types/usertypes";
 

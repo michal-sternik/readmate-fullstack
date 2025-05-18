@@ -1,11 +1,11 @@
 import FaceRoundedIcon from "@mui/icons-material/FaceRounded";
 import Face2RoundedIcon from "@mui/icons-material/Face2Rounded";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import { Avatar, IconButton, Tooltip } from "@mui/material";
+import { Avatar } from "@mui/material";
 
 import { PaginatedBooks } from "../../types/booktypes";
 import { Pagination } from "../Pagination/Pagination";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useSWR, { mutate } from "swr";
 import { MAX_RESULTS_PER_USER_PAGE } from "../../lib/constants";
 import { BookService } from "../../api/services/bookService";
@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { Gender } from "../../types/usertypes";
-import { convertAndDisplayError, formatFullDate } from "../../lib/utils";
+import { convertAndDisplayError } from "../../lib/utils";
 
 import { toast } from "react-toastify";
 import { UserProfileBook } from "../UserProfileBook/UserProfileBook";
@@ -24,24 +24,9 @@ const swrConfig = {
 };
 export const UserProfile = () => {
   const user = useSelector((state: RootState) => state.user);
+  const navigate = useNavigate();
 
   const [currentPage, setCurrentPage] = useState<number>(1);
-  // const booksFromDatabase: Book[] = mockBookCollection.map((book) => ({
-  //   ...book,
-  //   publishedDate: book.publishedDate
-  //     ? new Date(book.publishedDate)
-  //     : undefined,
-  //   startDate: new Date(book.startDate),
-  //   endDate: book.endDate ? new Date(book.endDate) : undefined,
-  // }));
-
-  // const paginatedBooks = {
-  //   currentPage: 1,
-  //   totalPages: 5,
-  //   totalItems: 27,
-  //   itemsPerPage: 6,
-  //   items: booksFromDatabase,
-  // };
 
   const {
     data: paginatedBooks,
@@ -63,6 +48,9 @@ export const UserProfile = () => {
       mutate(
         `/book?page=${currentPage}&itemsPerPage=${MAX_RESULTS_PER_USER_PAGE}`
       );
+      mutate(
+        (key) => typeof key === "string" && key.startsWith("/book/calendar")
+      );
       toast.success("Book deleted.");
     } catch (error) {
       convertAndDisplayError(error);
@@ -74,6 +62,16 @@ export const UserProfile = () => {
       `/book?page=${currentPage}&itemsPerPage=${MAX_RESULTS_PER_USER_PAGE}`
     );
   }, [currentPage]);
+
+  useEffect(() => {
+    if (!user.user) {
+      navigate("/login");
+    }
+  }, [user.user, navigate]);
+
+  if (!user.user) {
+    return null;
+  }
   return (
     <div className="flex flex-col gap-5 w-full h-full ">
       <div className="flex flex-col lg:flex-row gap-5 w-full h-40 p-5 bg-purple-500/10 rounded-4xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.2)] ">
@@ -154,90 +152,3 @@ export const UserProfile = () => {
     </div>
   );
 };
-
-const mockBookCollection = [
-  {
-    id: "dQHSTqR7ijUC",
-    title: "Manufacturing Execution System - MES",
-    authors: ["Jürgen Kletti", "Testowy"],
-    publishedDate: "2007-05-01 00:00:00",
-    link: "https://play.google.com/store/books/details?id=dQHSTqR7ijUC&source=gbs_api",
-    categories: ["Business & Economics"],
-    pageCount: 276,
-    description: "The transformation of the classic factory...",
-    imageLink:
-      "http://books.google.com/books/content?id=dQHSTqR7ijUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-    startDate: "2023-01-01 00:00:00",
-    endDate: null,
-  },
-  {
-    id: "pik30Yy6eEcC",
-    title: "MES Guide for Executives",
-    authors: ["Bianca Scholten"],
-    publishedDate: "2009-01-01 00:00:00",
-    link: "http://books.google.pl/books?id=pik30Yy6eEcC&dq=mes&hl=&source=gbs_api",
-    categories: ["Business & Economics"],
-    pageCount: 175,
-    description: "Are you having trouble demonstrating to management...",
-    imageLink:
-      "http://books.google.com/books/content?id=pik30Yy6eEcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-    startDate: "2023-01-31 00:00:00",
-    endDate: "2023-03-07 00:00:00",
-  },
-  {
-    id: "dQHSTqR7ijUC2",
-    title: "Manufacturing Execution System - MES",
-    authors: ["Jürgen Kletti", "Testowy"],
-    publishedDate: "2007-05-01 00:00:00",
-    link: "https://play.google.com/store/books/details?id=dQHSTqR7ijUC&source=gbs_api",
-    categories: ["Business & Economics"],
-    pageCount: 276,
-    description: "The transformation of the classic factory...",
-    imageLink:
-      "http://books.google.com/books/content?id=dQHSTqR7ijUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-    startDate: "2023-01-01 00:00:00",
-    endDate: "2023-02-13 00:00:00",
-  },
-  {
-    id: "pik30Yy6eEcC2",
-    title: "MES Guide for Executives",
-    authors: ["Bianca Scholten"],
-    publishedDate: "2009-01-01 00:00:00",
-    link: "http://books.google.pl/books?id=pik30Yy6eEcC&dq=mes&hl=&source=gbs_api",
-    categories: ["Business & Economics"],
-    pageCount: 175,
-    description: "Are you having trouble demonstrating to management...",
-    imageLink:
-      "http://books.google.com/books/content?id=pik30Yy6eEcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-    startDate: "2023-01-31 00:00:00",
-    endDate: "2023-03-07 00:00:00",
-  },
-  {
-    id: "dQHSTqR7ijUC3",
-    title: "Manufacturing Execution System - MES",
-    authors: ["Jürgen Kletti", "Testowy"],
-    publishedDate: "2007-05-01 00:00:00",
-    link: "https://play.google.com/store/books/details?id=dQHSTqR7ijUC&source=gbs_api",
-    categories: ["Business & Economics"],
-    pageCount: 276,
-    description: "The transformation of the classic factory...",
-    imageLink:
-      "http://books.google.com/books/content?id=dQHSTqR7ijUC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-    startDate: "2023-01-01 00:00:00",
-    endDate: "2023-02-13 00:00:00",
-  },
-  {
-    id: "pik30Yy6eEcC3",
-    title: "MES Guide for Executives",
-    authors: ["Bianca Scholten"],
-    publishedDate: "2009-01-01 00:00:00",
-    link: "http://books.google.pl/books?id=pik30Yy6eEcC&dq=mes&hl=&source=gbs_api",
-    categories: ["Business & Economics"],
-    pageCount: 175,
-    description: "Are you having trouble demonstrating to management...",
-    imageLink:
-      "http://books.google.com/books/content?id=pik30Yy6eEcC&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api",
-    startDate: "2023-01-31 00:00:00",
-    endDate: "2023-03-07 00:00:00",
-  },
-];
