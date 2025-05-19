@@ -9,6 +9,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'readmate-backend/**'
+  workflow_dispatch:
 
 
 jobs:
