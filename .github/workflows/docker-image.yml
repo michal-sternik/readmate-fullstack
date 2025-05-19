@@ -3,8 +3,13 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'readmate-backend/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'readmate-backend/**'
+
 
 jobs:
 
