@@ -1,0 +1,40 @@
+name: Frontend Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'readmate-frontend/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'readmate-frontend/**'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-frontend
+      COMMIT_SHA: ${{ github.sha }}
+      VITE_APP_API_URL: http://167.99.135.75:3000/api
+      
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: |
+        docker build --build-arg VITE_APP_API_URL=$VITE_APP_API_URL ./readmate-frontend \
+          -t $IMAGE:$COMMIT_SHA \
+          -t $IMAGE:latest
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GHCR_PAT }}
+
+    - name: Push image to GHCR
+      run: |
+         docker push $IMAGE:$COMMIT_SHA
+         docker push $IMAGE:latest
