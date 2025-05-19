@@ -41,5 +41,5 @@ jobs:
         
     - name: Push image to GHCR
       run: 
-         docker push $IMAGE:${TIMESTAMP}
+         docker push $IMAGE:$TIMESTAMP
          docker push $IMAGE:latest
