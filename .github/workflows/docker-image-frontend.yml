@@ -17,13 +17,13 @@ jobs:
     env:
       IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-frontend
       COMMIT_SHA: ${{ github.sha }}
-      REACT_APP_API_URL: http://167.99.135.75:3000/api
+      VITE_APP_API_URL: http://167.99.135.75:3000/api
       
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: |
-        docker build --build-arg REACT_APP_API_URL=$REACT_APP_API_URL ./readmate-frontend \
+        docker build --build-arg VITE_APP_API_URL=$VITE_APP_API_URL ./readmate-frontend \
           -t $IMAGE:$COMMIT_SHA \
           -t $IMAGE:latest
 
