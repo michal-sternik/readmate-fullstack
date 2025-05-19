@@ -1,6 +1,6 @@
 export const WEEKSPLIT = 14;
 export const WEEKDURATION = 7;
-export const API_BASE_URL = "http://localhost:3000/api";
+export const API_BASE_URL = import.meta.env.VITE_APP_API_URL;
 export const MAX_RESULTS_PER_EXPLORE_PAGE = 9;
 export const MAX_RESULTS_PER_USER_PAGE = 6;
 
