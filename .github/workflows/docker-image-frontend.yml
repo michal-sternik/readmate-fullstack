@@ -14,22 +14,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-backend
+      COMMIT_SHA: ${{ github.sha }}
+      
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set env vars
-        env:
-          IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-backend
-          COMMIT_SHA: ${{ github.sha }}
-          
-        run: |
-          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
-          echo "COMMIT_SHA=${COMMIT_SHA}" >> $GITHUB_ENV
+
       - name: Build the Docker image
        
         run: docker build ./readmate-frontend \
-          -t $IMAGE:${TIMESTAMP} \
+          -t $IMAGE:${COMMIT_SHA} \
           -t $IMAGE:latest
 
       - name: Log in to GitHub Container Registry
@@ -40,5 +35,5 @@ jobs:
           password: ${{ secrets.GHCR_PAT }}
 
       - name: Push image to GHCR
-        run: docker push $IMAGE:${TIMESTAMP}
+        run: docker push $IMAGE:$COMMIT_SHA
              docker push $IMAGE:latest
