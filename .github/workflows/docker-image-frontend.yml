@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-backend
+      IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-frontend
       COMMIT_SHA: ${{ github.sha }}
       
     steps:
