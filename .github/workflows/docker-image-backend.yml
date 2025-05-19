@@ -37,6 +37,6 @@ jobs:
         password: ${{ secrets.GHCR_PAT }}
         
     - name: Push image to GHCR
-      run: 
+      run: |
          docker push $IMAGE:$COMMIT_SHA
          docker push $IMAGE:latest
