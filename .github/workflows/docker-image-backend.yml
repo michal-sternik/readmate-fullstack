@@ -20,16 +20,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set IMAGE and TIMESTAMP envs
-      run: |
-        echo "IMAGE=ghcr.io/${{ github.repository_owner }}/readmate-backend" >> $GITHUB_ENV
-        echo "TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
-
-
+      env:
+        COMMIT_SHA: ${{ github.sha }}
+        IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-backend
     - name: Build the Docker image
       run: |
         docker build ./readmate-backend \
-          -t $IMAGE:$TIMESTAMP \
+          -t $IMAGE:$COMMIT_SHA \
           -t $IMAGE:latest
             
     - name: Log in to GitHub Container Registry
@@ -41,5 +38,5 @@ jobs:
         
     - name: Push image to GHCR
       run: 
-         docker push $IMAGE:$TIMESTAMP
+         docker push $IMAGE:$COMMIT_SHA
          docker push $IMAGE:latest
