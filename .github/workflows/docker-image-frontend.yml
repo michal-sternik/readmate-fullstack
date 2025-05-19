@@ -17,11 +17,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Build the Docker image
+      
+      - name: Set env vars
         env:
-          TIMESTAMP: $(date +'%Y%m%d%H%M%S')
-          IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-frontend
+          IMAGE: ghcr.io/${{ github.repository_owner }}/readmate-backend
+          COMMIT_SHA: ${{ github.sha }}
+          
+        run: |
+          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
+          echo "COMMIT_SHA=${COMMIT_SHA}" >> $GITHUB_ENV
+      - name: Build the Docker image
+       
         run: docker build ./readmate-frontend \
           -t $IMAGE:${TIMESTAMP} \
           -t $IMAGE:latest
