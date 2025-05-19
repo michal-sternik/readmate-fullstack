@@ -19,7 +19,7 @@ async function bootstrap() {
     }),
   );
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: 'http://167.99.135.75',
     credentials: true,
   });
   const config = new DocumentBuilder()

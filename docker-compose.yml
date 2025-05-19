@@ -13,7 +13,7 @@ services:
       - db_data:/var/lib/postgresql/data
 
   api:
-    image: ghcr.io/michal-sternik/readmate-backend:9ae5a002506ec123b6ff9e967f83be63e68d2dc8
+    image: ghcr.io/michal-sternik/readmate-backend:latest
     container_name: readmate-backend
     ports:
       - "3000:3000"
@@ -25,6 +25,12 @@ services:
       JWT_EXPIRE_IN: ${JWT_EXPIRE_IN}
       GOOGLE_BOOKS_API_KEY: ${GOOGLE_BOOKS_API_KEY}
       NODE_ENV: ${NODE_ENV}
+      
+  frontend:
+    image: ghcr.io/michal-sternik/readmate-frontend:latest
+    ports:
+      - "80:80"
+    restart: unless-stopped
 
 volumes:
   db_data:
