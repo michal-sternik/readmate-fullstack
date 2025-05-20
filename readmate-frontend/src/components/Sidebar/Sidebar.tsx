@@ -54,7 +54,7 @@ export const Sidebar = () => {
   return (
     <div className="h-full w-full lg:min-w-[250px] lg:max-w-[400px] flex justify-center items-center ">
       <div className="w-full h-full flex gap-5 lg:gap-0 flex-col items-center bg-white/10 shadow-[0_0_40px_rgba(0,0,0,0.3)] lg:backdrop-blur-sm rounded-4xl border border-white/20">
-        <div className="flex flex-col w-full h-full gap-5 lg:gap-20 items-center">
+        <div className="flex flex-col w-full h-full gap-5 lg:gap-10 items-center">
           <div className="w-full flex justify-center items-center mt-10 p-1">
             <a href="/" className="flex justify-center">
               <Logo className="w-8/10 lg:w-full" />

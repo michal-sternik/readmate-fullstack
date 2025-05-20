@@ -57,7 +57,7 @@ const Home = () => {
   return (
     <>
       {/* not logged in overlay */}
-      {!user && (
+      {user && (
         <div className="absolute top-0 left-0 w-full h-full z-50 flex items-center justify-center   rounded-4xl">
           <button
             onClick={() => navigate("/login")}
@@ -68,7 +68,7 @@ const Home = () => {
         </div>
       )}
       <div
-        className={`relative flex-col flex h-full w-full ${!user && "blur-xs"}`}
+        className={`relative  flex-col flex h-full w-full ${user && "blur-xs"}`}
       >
         <div className="px-2 font-normal text-[25px]  text-[#A449FF] flex items-center">
           Your activity ({`${new Date().getFullYear()}`}):
