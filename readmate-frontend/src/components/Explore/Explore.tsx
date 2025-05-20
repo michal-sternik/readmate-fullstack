@@ -19,6 +19,7 @@ const swrConfig = {
 };
 
 export const Explore = () => {
+  const user = useSelector((state: RootState) => state.user.user);
   const navigate = useNavigate();
   const [showPagination, setShowPagination] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
@@ -66,14 +67,14 @@ export const Explore = () => {
 
       <div className=" flex items-center pt-5 lg:pt-0">
         <div className="flex flex-row items-center justify-start w-full gap-2">
-          <span className="inline lg:hidden xl:inline">
-            Cannot find specified book?
-          </span>
+          <span className="hidden xl:inline">Cannot find specified book?</span>
           <Button
-            onClick={() => navigate("/addCustomBook")}
-            className=" min-w-[150px]"
+            onClick={() =>
+              user ? navigate("/addCustomBook") : navigate("/login")
+            }
+            className=" min-w-[250px]"
           >
-            Add Custom Book
+            {user ? "Add Custom Book" : "Log in to Add Custom Book"}
           </Button>
         </div>
         {showPagination && (
