@@ -17,7 +17,7 @@ export const BookList = ({ bookList, isLoading }: BookListProps) => {
           Nothing found. Search for books.
         </span>
       ) : (
-        Array.from({ length: 9 }, (_, i) => <SingleBookSkeleton key={i} />)
+        bookList.map((book) => <SingleBook key={book.id} book={book} />)
       )}
     </div>
   );
