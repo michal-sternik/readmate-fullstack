@@ -57,7 +57,7 @@ export const LogIn = () => {
   return (
     <FormProvider {...form}>
       <form
-        onClick={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col-reverse xl:flex-row xl:flex-row gap-10 lg:gap-5 h-full w-full"
       >
         <div className="flex flex-col w-full xl:w-1/2 h-full justify-between gap-5">
