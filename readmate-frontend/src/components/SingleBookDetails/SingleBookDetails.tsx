@@ -142,7 +142,7 @@ export const SingleBookDetails = () => {
   };
   return (
     <>
-      <div className="flex flex-col-reverse overflow-auto xl:flex-row h-full min-h-145 lg:min-h-auto w-full gap-10 lg:gap-5">
+      <div className="flex flex-col-reverse overflow-auto xl:flex-row h-full min-h-130 w-full gap-10 lg:gap-5">
         <div className="flex flex-col w-full h-full xl:w-2/3 gap-3 xl:gap-5 justify-between ">
           <div className="flex flex-col w-full h-full gap-3">
             <div className="text-2xl text-[#A449FF] font-extrabold">
