@@ -44,7 +44,7 @@ export const RootLayout = () => {
               </div>
             </div>
           </div>
-          <div className="overflow-auto custrom-scroll relative p-5 gap-3 flex flex-col text-black bg-white/50 lg:backdrop-blur-sm w-full h-full rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
+          <div className="overflow-auto custom-scroll relative p-5 gap-3 flex flex-col text-black bg-white/50 lg:backdrop-blur-sm w-full h-full rounded-4xl shadow-[0_0_25px_rgba(0,0,0,0.3)]">
             {loading ? (
               <div className="text-[#A449FF] text-[100px] h-full  justify-center flex items-center font-bold">
                 <CircularProgress size={100} />
