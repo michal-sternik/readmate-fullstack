@@ -68,7 +68,9 @@ const Home = () => {
         </div>
       )}
       <div
-        className={`relative flex-col flex h-full w-full ${!user && "blur-xs"}`}
+        className={`relative  flex-col flex h-full w-full ${
+          !user && "blur-xs"
+        }`}
       >
         <div className="px-2 font-normal text-[25px]  text-[#A449FF] flex items-center">
           Your activity ({`${new Date().getFullYear()}`}):

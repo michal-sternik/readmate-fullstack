@@ -65,8 +65,8 @@ export const Explore = () => {
         <BookList bookList={books} isLoading={isLoading} />
       )}
 
-      <div className=" flex items-center pt-5 lg:pt-0">
-        <div className="flex flex-row items-center justify-start w-full gap-2">
+      <div className=" flex flex-col sm:flex-row gap-5 items-center pt-5 lg:pt-0">
+        <div className="flex flex-row items-center justify-center lg:justify-start w-full gap-2">
           <span className="hidden xl:inline">Cannot find specified book?</span>
           <Button
             onClick={() =>

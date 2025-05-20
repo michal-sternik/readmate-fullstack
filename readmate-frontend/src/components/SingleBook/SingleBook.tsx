@@ -37,7 +37,7 @@ export const SingleBook = ({ book }: SingleBookProps) => {
         <NavLink
           to="/manageBook"
           state={{ book: book }}
-          className="max-h-15 cursor-pointer font-medium xl:text:md 2xl:text-lg overflow-auto scrollbar-hide"
+          className="min-h-10 max-h-15 cursor-pointer font-medium xl:text:md 2xl:text-lg overflow-auto scrollbar-hide"
         >
           {book.title}
         </NavLink>

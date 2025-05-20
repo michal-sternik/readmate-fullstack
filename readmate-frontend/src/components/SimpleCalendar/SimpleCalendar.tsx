@@ -107,7 +107,7 @@ export const SimpleCalendar = () => {
     actualDate.toLocaleString("default", { year: "numeric" });
 
   return (
-    <div className="grow min-h-[200px] lg:min-h-0 bg-white/90 shadow-[0px_1px_14px_0px_rgba(0,0,0,0.3)] rounded-4xl flex flex-col  p-4">
+    <div className="grow bg-white/90 shadow-[0px_1px_14px_0px_rgba(0,0,0,0.3)] rounded-4xl flex flex-col  p-4">
       <div className="flex w-full flex-row justify-between items-center lg:px-5">
         <div className="flex  flex-row items-center gap-3 lg:gap-10 ">
           {actual7DaysRange.length === 7 && (
