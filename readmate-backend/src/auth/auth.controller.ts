@@ -40,7 +40,12 @@ export class AuthController {
   })
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
-    return await this.authService.register(registerDto);
+    try {
+      return await this.authService.register(registerDto);
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   @HttpCode(HttpStatus.OK)
@@ -52,20 +57,31 @@ export class AuthController {
     @Req() request: { user: { id: number } },
     @Res({ passthrough: true }) res: Response,
   ) {
-    const accessToken = this.authService.login(request.user.id);
+    try {
+      const accessToken = this.authService.login(request.user.id);
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 24, // 1 dzień
-    });
-    return { message: 'User logged in' };
+      res.cookie('accessToken', accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60 * 24,
+      });
+      return { message: 'User logged in' };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
+
   @ApiOperation({ summary: 'Clears access token - logs user out' })
   @Post('logout')
   logout(@Res({ passthrough: true }) response: Response) {
-    response.clearCookie('accessToken');
-    return { message: 'User logged out' };
+    try {
+      response.clearCookie('accessToken');
+      return { message: 'User logged out' };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }

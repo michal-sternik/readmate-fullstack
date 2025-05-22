@@ -13,20 +13,18 @@ import { UserService } from './user.service';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('user')
 export class UserController {
-  // @ApiOperation({ summary: 'Hello world' })
-  // @UseGuards(GuestJwtAuthGuard)
-  // @Roles(Role.GUEST)
-  // @Get()
-  // getHello(): string {
-  //   return 'Hello world from UserController!';
-  // }
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Protected route - returns user information' })
   @Get()
   async getUserProfile(
     @Req() request: { user: RequestUser },
-  ): Promise<UserInfoDto> {
-    return this.userService.getUserFrontendInfoById(request.user.id);
+  ): Promise<UserInfoDto | undefined> {
+    try {
+      return this.userService.getUserFrontendInfoById(request.user.id);
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
   }
 }
