@@ -44,7 +44,11 @@ export class BookController {
     @Query('month') month: number,
     @Query('year') year: number,
   ) {
-    return this.bookService.getUserCalendar(request.user.id, month, year);
+    try {
+      return this.bookService.getUserCalendar(request.user.id, month, year);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @ApiOperation({
@@ -56,7 +60,11 @@ export class BookController {
     @Req() request: { user: RequestUser },
     @Query('year') year: number,
   ) {
-    return this.bookService.getUserReadingStatistics(request.user.id, year);
+    try {
+      return this.bookService.getUserReadingStatistics(request.user.id, year);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @ApiQuery({
@@ -73,13 +81,17 @@ export class BookController {
     @Query('langRestrict') langRestrict?: 'true' | 'false',
     @Query('maxResults') maxResults: number = 9,
   ) {
-    const restrict = langRestrict === 'true';
-    return this.bookService.searchGoogleBooks(
-      searchQuery,
-      startIndex,
-      maxResults,
-      restrict,
-    );
+    try {
+      const restrict = langRestrict === 'true';
+      return this.bookService.searchGoogleBooks(
+        searchQuery,
+        startIndex,
+        maxResults,
+        restrict,
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @ApiOperation({
@@ -91,7 +103,11 @@ export class BookController {
     @Req() request: { user: RequestUser },
     @Param('id') getBookId: string,
   ) {
-    return this.bookService.getOneUserBook(request.user.id, getBookId);
+    try {
+      return this.bookService.getOneUserBook(request.user.id, getBookId);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @ApiOperation({
@@ -110,16 +126,20 @@ export class BookController {
     @Query('itemsPerPage') itemsPerPage: number = 6,
     @Query('userId') userId?: number, //optional parameter for admin
   ) {
-    const targetUserId =
-      //eslint disabled to make it easier to undestand the condition
-      // eslint-disable-next-line prettier/prettier
-      request.user.role === Role.ADMIN && userId ? userId : request.user.id;
+    try {
+      const targetUserId =
+        //eslint disabled to make it easier to undestand the condition
+        // eslint-disable-next-line prettier/prettier
+        request.user.role === Role.ADMIN && userId ? userId : request.user.id;
 
-    return this.bookService.getUserBookListPaginated(
-      targetUserId,
-      page,
-      itemsPerPage,
-    );
+      return this.bookService.getUserBookListPaginated(
+        targetUserId,
+        page,
+        itemsPerPage,
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @ApiOperation({
@@ -136,10 +156,14 @@ export class BookController {
     @Req() request: { user: RequestUser },
     @Body() createBookDto: CreateBookDto,
   ) {
-    return this.bookService.addOrConnectBookToUser(
-      request.user.id,
-      createBookDto,
-    );
+    try {
+      return this.bookService.addOrConnectBookToUser(
+        request.user.id,
+        createBookDto,
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @ApiOperation({
@@ -152,11 +176,15 @@ export class BookController {
     @Param('id') editedBookId: string,
     @Body() editedBookDto: EditReadDatesDto,
   ) {
-    return this.bookService.editUserReadDates(
-      request.user.id,
-      editedBookId,
-      editedBookDto,
-    );
+    try {
+      return this.bookService.editUserReadDates(
+        request.user.id,
+        editedBookId,
+        editedBookDto,
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @ApiOperation({
@@ -169,6 +197,10 @@ export class BookController {
     @Req() request: { user: RequestUser },
     @Param('id') bookId: string,
   ) {
-    return this.bookService.removeBookFromUser(request.user.id, bookId);
+    try {
+      return this.bookService.removeBookFromUser(request.user.id, bookId);
+    } catch (error) {
+      console.error(error);
+    }
   }
 }

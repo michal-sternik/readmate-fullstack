@@ -35,19 +35,6 @@ export class UserService {
     });
   }
 
-  //   async getUserWithBooksById(id: number): Promise<SafeUserDto> {
-  //     const user = await this.userRepository.findOne({
-  //       where: { id },
-  //       relations: ['userBooks'],
-  //     });
-  //     if (!user) {
-  //       throw new UserNotFoundException(id);
-  //     }
-  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //     const { password, ...safeUser } = user;
-  //     return safeUser;
-  //   }
-
   async getUserById(id: number): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id },
