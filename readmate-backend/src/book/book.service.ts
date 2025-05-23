@@ -133,8 +133,6 @@ export class BookService {
       q: searchQuery,
       maxResults: maxResults.toString(),
       startIndex: startIndex.toString(),
-      ...(key && { key }),
-      ...(langRestrict && { langRestrict: 'pl' }),
     });
 
     if (key) {
