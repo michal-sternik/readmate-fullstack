@@ -18,10 +18,18 @@ async function bootstrap() {
       },
     }),
   );
-  app.enableCors({
-    origin: 'http://167.99.135.75',
-    credentials: true,
-  });
+if (process.env.NODE_ENV === 'production') {
+    app.enableCors({
+      origin: 'http://167.99.135.75',
+      credentials: true,
+    });
+  } else {
+    app.enableCors({
+      origin: true,
+      credentials: true,
+    });
+}
+
   const config = new DocumentBuilder()
     .setTitle('Blog API')
     .setDescription('The blog API description')
