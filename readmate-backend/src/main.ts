@@ -25,7 +25,7 @@ if (process.env.NODE_ENV === 'production') {
     });
   } else {
     app.enableCors({
-      origin: true,
+      origin: 'http://localhost:5173',
       credentials: true,
     });
 }
