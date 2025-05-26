@@ -143,7 +143,19 @@ export const Register = () => {
               <Controller
                 name="birthDate"
                 control={control}
-                rules={{ required: "Birth date cannot be empty." }}
+                rules={{
+                  required: "Birth date cannot be empty.",
+                  validate: (value: string | null) => {
+                    if (!value) return "Birth date cannot be empty.";
+                    const date = dayjs(value);
+                    if (!date.isValid()) return "Invalid date format.";
+                    if (date.isBefore(dayjs("1900-01-01"), "day"))
+                      return "Birth date cannot be before January 1, 1900.";
+                    if (date.isAfter(dayjs(), "day"))
+                      return "Birth date cannot be in the future.";
+                    return true;
+                  },
+                }}
                 render={({ field, fieldState }) => (
                   <DatePicker
                     {...field}

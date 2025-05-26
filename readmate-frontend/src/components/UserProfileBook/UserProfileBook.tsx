@@ -48,7 +48,7 @@ export const UserProfileBook = ({ book, deleteBook }: UserProfileBookProps) => {
           >
             {book.title}
           </NavLink>
-          <p className="font-extralight text-xs ">
+          <p className="font-extralight max-w-[300px] text-xs ">
             {book.authors?.join(", ") || "Unknown Author"}
           </p>
           <p className="font-light text-xs ">
@@ -60,8 +60,8 @@ export const UserProfileBook = ({ book, deleteBook }: UserProfileBookProps) => {
             <div className="flex w-3/4 items-center">
               <div className=" border border-black rounded-4xl px-2  text-sm max-w-full">
                 <div className="overflow-auto scrollbar-hide whitespace-nowrap">
-                  <span className="inline-block">
-                    {book.categories?.join(", ")}
+                  <span className="inline-block max-w-[300px]">
+                    {book.categories?.join(", ") || "Other"}
                   </span>
                 </div>
               </div>

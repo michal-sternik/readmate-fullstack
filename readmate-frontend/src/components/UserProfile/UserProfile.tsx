@@ -64,14 +64,14 @@ export const UserProfile = () => {
   }, [currentPage]);
 
   useEffect(() => {
-    if (!user.user) {
+    if (user.initialized && !user.user) {
       navigate("/login");
     }
-  }, [user.user, navigate]);
+  }, [user.initialized, user.user, navigate]);
 
-  if (!user.user) {
-    return null;
-  }
+  // if (!user.user) {
+  //   return null;
+  // }
   return (
     <div className="flex flex-col gap-5 w-full h-full ">
       <div className="flex flex-col lg:flex-row gap-5 w-full h-40 p-5 bg-purple-500/10 rounded-4xl border border-white/20 shadow-[0_0_40px_rgba(0,0,0,0.2)] ">
@@ -96,12 +96,12 @@ export const UserProfile = () => {
                 )}
               </Avatar>
 
-              <div className="text-md lg:text-2xl text-[#A449FF] font-extrabold whitespace-nowrap">
+              <div className="text-sm md:text-md lg:text-2xl text-[#A449FF] font-extrabold whitespace-nowrap">
                 {user.user.username} {`(${user.user.age})`}
               </div>
-              <div className="text-md lg:text-xl text-[#A449FF] font-mediu">
+              <div className="text-sm md:text-md lg:text-xl text-[#A449FF] font-mediu">
                 joined{" "}
-                <span className="text-md lg:text-xl font-extrabold text-[#A449FF]">
+                <span className="text-sm md:text-md lg:text-xl font-extrabold text-[#A449FF]">
                   {Math.floor(
                     (new Date().getTime() -
                       new Date(user.user.createdAt).getTime()) /
@@ -121,7 +121,7 @@ export const UserProfile = () => {
           <div className="flex  w-full h-full items-center text-[#A449FF] font-extrabold  ">
             {paginatedBooks ? (
               <>
-                <div className="whitespace-nowrap overflow-x-auto scrollbar-hide">
+                <div className="text-xs md:text-md whitespace-nowrap overflow-x-auto scrollbar-hide">
                   Total books: {paginatedBooks.totalItems}
                 </div>
                 <Pagination
@@ -140,7 +140,9 @@ export const UserProfile = () => {
             Error loading books. Please try again later.
           </div>
         ) : isLoading ? (
-          <span>loading</span>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#A449FF]" />
+          </div>
         ) : (
           paginatedBooks &&
           paginatedBooks.totalItems > 0 &&

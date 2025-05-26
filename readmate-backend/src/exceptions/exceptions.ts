@@ -73,3 +73,9 @@ export class DuplicateBookException extends HttpException {
     super(`User is already reading this book.`, HttpStatus.CONFLICT);
   }
 }
+
+export class DatesError extends HttpException {
+  constructor() {
+    super(`End date cannot be earlier than start date.`, HttpStatus.CONFLICT);
+  }
+}

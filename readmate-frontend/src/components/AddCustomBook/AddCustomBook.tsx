@@ -1,9 +1,9 @@
 import {
   useForm,
   Controller,
-  useWatch,
-  useFormContext,
   FormProvider,
+  useFormContext,
+  useWatch,
 } from "react-hook-form";
 import {
   TextField,
@@ -25,8 +25,9 @@ import { BookService } from "../../api/services/bookService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { mutate } from "swr";
+import { useBookDateValidation } from "../../hooks/useBookDateValidation";
 
-type FormValues = {
+export type FormValues = {
   title: string;
   publishedDate?: Dayjs | null;
   pageCount?: number;
@@ -49,28 +50,36 @@ const initialFormValues: FormValues = {
 };
 
 export const AddCustomBook = () => {
-  const form = useForm<FormValues>({
-    defaultValues: {
-      ...initialFormValues,
-    },
-  });
-
+  const form = useForm<FormValues>({ defaultValues: initialFormValues });
   const {
     register,
     handleSubmit,
     control,
     reset,
     setValue,
+    getValues,
     formState: { errors },
   } = form;
 
-  const [currentlyReading, setCurrentlyReading] = useState(false);
+  const {
+    dateFromError,
+    dateToError,
+    currentlyReading,
+    setCurrentlyReading,
+    handleDateFromChange,
+    handleDateToChange,
+    setDateToError,
+    reset: resetDateValidation,
+  } = useBookDateValidation(setValue, getValues);
+
   const [formResetKey, setFormResetKey] = useState(0);
   const navigate = useNavigate();
 
   const onSubmit = async (data: FormValues) => {
-    console.log("test");
-    if (!data.startDate) return;
+    if (!data.startDate || dateFromError || dateToError || publishedDateError) {
+      toast.error("Please correct the errors in the form before submitting.");
+      return;
+    }
 
     const finalData: Book = {
       ...data,
@@ -94,12 +103,30 @@ export const AddCustomBook = () => {
     }
   };
 
+  const [publishedDateError, setPublishedDateError] = useState<string | null>(
+    null
+  );
+  const handlePublishedDateChange = (date: Dayjs | null) => {
+    if (date) {
+      const parsedDate = toDateOrUndefined(date);
+
+      if (parsedDate && date.isBefore(dayjs("1900-01-01"), "day")) {
+        setPublishedDateError(
+          "Published date cannot be before January 1, 1900."
+        );
+      } else if (parsedDate && parsedDate > new Date()) {
+        setPublishedDateError("Published date cannot be in the future.");
+      } else {
+        setPublishedDateError(null);
+      }
+    } else {
+      setPublishedDateError(null);
+    }
+  };
+
   const handleReset = () => {
     reset(initialFormValues);
-
-    setCurrentlyReading(false);
-    //wymusza zmiane referencji funkcji przekazywanej do TagsInput
-    //zeby zresetowac inputy
+    resetDateValidation();
     setFormResetKey((prev) => prev + 1);
   };
 
@@ -145,9 +172,18 @@ export const AddCustomBook = () => {
                     {...field}
                     label="Published Date"
                     value={field.value || null}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={(date) => {
+                      field.onChange(date);
+                      handlePublishedDateChange(date);
+                    }}
                     disableFuture
-                    slotProps={{ field: { clearable: true } }}
+                    slotProps={{
+                      textField: {
+                        error: !!publishedDateError,
+                        helperText: publishedDateError,
+                      },
+                      field: { clearable: true },
+                    }}
                     className="w-full"
                   />
                 )}
@@ -157,14 +193,26 @@ export const AddCustomBook = () => {
             <TextField
               label="Page Count"
               type="number"
+              onInput={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.value = target.value.replace(/[^0-9]/g, "");
+              }}
               {...register("pageCount", {
-                min: 1,
-                //parsujemy stringa na liczbę, zeby nie zwracac NaN
+                min: {
+                  value: 1,
+                  message: "Page count must be greater than 0.",
+                },
+                max: {
+                  value: 9999,
+                  message: "Page count must be less than 10000.",
+                },
                 setValueAs: (value) => {
                   const parsed = parseInt(value, 10);
                   return isNaN(parsed) ? undefined : parsed;
                 },
               })}
+              error={!!errors.pageCount}
+              helperText={errors.pageCount?.message}
               className="w-full"
             />
           </div>
@@ -185,19 +233,25 @@ export const AddCustomBook = () => {
               <Controller
                 name="startDate"
                 control={control}
-                rules={{ required: "Start date cannot be empty." }}
-                render={({ field, fieldState }) => (
+                // rules={{
+                //   required: "Start date cannot be empty.",
+                //   validate: (value) => {
+                //     const result = validateStartDate(value);
+                //     return result === null ? true : result;
+                //   },
+                // }}
+                render={({ field }) => (
                   <DatePicker
                     {...field}
                     label="Start Date"
                     value={field.value || null}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={handleDateFromChange}
                     disableFuture
                     slotProps={{
                       textField: {
                         required: true,
-                        error: !!fieldState.error,
-                        helperText: fieldState.error?.message,
+                        error: !!dateFromError,
+                        helperText: dateFromError,
                       },
                       field: { clearable: true },
                     }}
@@ -209,31 +263,18 @@ export const AddCustomBook = () => {
               <Controller
                 name="endDate"
                 control={control}
-                rules={{
-                  validate: (endDate) => {
-                    const startDate = form.getValues("startDate");
-                    if (
-                      endDate &&
-                      startDate &&
-                      dayjs(endDate).isBefore(dayjs(startDate))
-                    ) {
-                      return "End date cannot be earlier than start date.";
-                    }
-                    return true;
-                  },
-                }}
-                render={({ field, fieldState }) => (
+                render={({ field }) => (
                   <DatePicker
                     {...field}
                     label="End Date"
                     value={field.value || null}
-                    onChange={(date) => field.onChange(date)}
+                    onChange={handleDateToChange}
                     disabled={currentlyReading}
                     disableFuture
                     slotProps={{
                       textField: {
-                        error: !!fieldState.error,
-                        helperText: fieldState.error?.message,
+                        error: !!dateToError,
+                        helperText: dateToError,
                       },
                       field: { clearable: true },
                     }}
@@ -249,7 +290,10 @@ export const AddCustomBook = () => {
                   checked={currentlyReading}
                   onChange={() => {
                     setCurrentlyReading(!currentlyReading);
-                    if (!currentlyReading) setValue("endDate", null);
+                    if (!currentlyReading) {
+                      setValue("endDate", null);
+                      setDateToError(null);
+                    }
                   }}
                 />
               }
@@ -274,6 +318,7 @@ export const AddCustomBook = () => {
     </FormProvider>
   );
 };
+
 const TagsInput = React.memo(
   ({
     resetKey,
@@ -324,8 +369,16 @@ const TagsInput = React.memo(
         <div className="flex flex-wrap gap-2">
           {values.map((v) => (
             <Chip
+              className="max-w-[120px] md:max-w-[220px] lg:max-w-[320px] overflow-auto "
               key={v}
-              label={v}
+              label={
+                <span
+                  title={v}
+                  className="max-w-[100px] md:max-w-[200px] lg:max-w-[300px] overflow-auto custom-scroll inline-block align-middle"
+                >
+                  {v}
+                </span>
+              }
               onDelete={() => remove(v)}
               color={chipColor}
             />

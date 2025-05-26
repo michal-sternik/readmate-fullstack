@@ -9,11 +9,13 @@ interface UserState {
   user: User | null;
   loading: boolean;
   error: string | null;
+  initialized: boolean;
 }
 const initialState: UserState = {
   user: null,
   loading: false,
   error: null,
+  initialized: false,
 };
 
 export const fetchUserProfile = createAsyncThunk<User>(
@@ -40,6 +42,7 @@ const userSlice = createSlice({
       state.user = null;
       state.error = null;
       state.loading = false;
+      state.initialized = false;
     },
   },
   extraReducers: (builder) => {
@@ -52,11 +55,13 @@ const userSlice = createSlice({
         fetchUserProfile.fulfilled,
         (state, action: PayloadAction<User>) => {
           state.loading = false;
+          state.initialized = true;
           state.user = action.payload;
         }
       )
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
+        state.initialized = true;
         state.error = action.payload as string;
       });
   },

@@ -158,3 +158,27 @@ export const generateSkeletonBooksForWeek = (): SkeletonCalendarBook[] => {
 
   return skeletonBooks;
 };
+
+export const validateStartDate = (start: Dayjs | null): string | null => {
+  if (!start) return "Start date cannot be empty.";
+  if (start.isAfter(dayjs(), "day"))
+    return "Start date cannot be in the future.";
+  if (start.isBefore(dayjs("1900-01-01"), "day"))
+    return "Start date cannot be earlier than 01.01.1900.";
+  return null;
+};
+
+export const validateEndDate = (
+  end: Dayjs | null,
+  start: Dayjs | null
+): string | null => {
+  if (!end) return null;
+  if (end.isBefore(dayjs("1900-01-01"), "day"))
+    return "End date cannot be earlier than 01.01.1900.";
+  if (start && end.isBefore(start))
+    return "End date cannot be earlier than start date.";
+  if (start && end.diff(start, "day") < 1)
+    return "End date must be at least 1 day after start date.";
+  if (end.isAfter(dayjs(), "day")) return "End date cannot be in the future.";
+  return null;
+};

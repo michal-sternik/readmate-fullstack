@@ -15,10 +15,7 @@ export const RootLayout = () => {
   const dispatch = useAppDispatch();
   const loading = useSelector((state: RootState) => state.user.loading);
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      dispatch(fetchUserProfile());
-    }
+    dispatch(fetchUserProfile());
   }, [dispatch]);
 
   return (
