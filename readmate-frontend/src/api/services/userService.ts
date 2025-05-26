@@ -9,8 +9,11 @@ export class UserService {
     return userData.data;
   }
   public static async login(form: LoginFormValues): Promise<void> {
-    localStorage.setItem("isAuthenticated", "true");
-    return (await booksApi.post("/auth/login", form)).data;
+    const response = await booksApi.post("/auth/login", form);
+    if (response.status === 200) {
+      localStorage.setItem("isAuthenticated", "true");
+    }
+    return response.data;
   }
   public static async register(form: RegisterFormValues): Promise<void> {
     await booksApi.post("/auth/register", form);
