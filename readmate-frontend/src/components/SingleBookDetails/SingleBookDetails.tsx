@@ -143,13 +143,15 @@ export const SingleBookDetails = () => {
   };
   return (
     <>
-      <div className="flex flex-col-reverse  xl:flex-row h-full min-h-130 w-full gap-10 lg:gap-5">
+      <div className="flex flex-col-reverse  xl:flex-row  w-full gap-10 lg:gap-5">
         <div className="flex flex-col w-full h-full xl:w-2/3 gap-3 xl:gap-5 justify-between ">
           <div className="flex flex-col w-full h-full gap-3">
-            <div className="text-2xl text-[#A449FF] font-extrabold">
+            <div className="text-2xl text-[#A449FF] font-extrabold max-w-full max-h-25 overflow-auto custom-scroll">
               {title}
             </div>
-            <div className="text-md text-[#A449FF] ">{authorDisplay}</div>
+            <div className="text-md text-[#A449FF] max-w-full max-h-25 overflow-auto custom-scroll">
+              {authorDisplay}
+            </div>
             <div className="flex xl:hidden flex-wrap flex-row gap-2 items-center justify-start ">
               <CustomChip
                 icon={<AutoStoriesIcon />}
@@ -165,7 +167,11 @@ export const SingleBookDetails = () => {
                     : "Date unknown"
                 }
               />
-              <CustomChip icon={<CategoryIcon />} label={categoryDisplay} />
+              <CustomChip
+                icon={<CategoryIcon />}
+                label={categoryDisplay}
+                className="max-w-50"
+              />
             </div>
             <div className="hidden xl:inline text-xl text-[#A449FF]">
               Description:
@@ -300,14 +306,18 @@ export const SingleBookDetails = () => {
                     : "Date unknown"
                 }
               />
-              <CustomChip icon={<CategoryIcon />} label={categoryDisplay} />
+              <CustomChip
+                icon={<CategoryIcon />}
+                label={categoryDisplay}
+                className="max-w-50"
+              />
             </div>
           </div>
 
           <img
             src={imageLink}
             alt={title}
-            className="max-h-full max-w-full h-full object-contain "
+            className="max-h-40 xl:max-h-full  max-w-full h-full object-contain "
           />
         </div>
       </div>

@@ -44,6 +44,7 @@ export const useBookDateValidation = <
     }
     setValue("endDate" as Path<T>, val as PathValue<T, Path<T>>);
     const start = getValues("startDate" as Path<T>) as Dayjs | null;
+    debugger;
     const endError = validateEndDate(val, start);
     setDateToError(endError);
   };

@@ -175,10 +175,10 @@ export const validateEndDate = (
   if (!end) return null;
   if (end.isBefore(dayjs("1900-01-01"), "day"))
     return "End date cannot be earlier than 01.01.1900.";
+  if (start && end.startOf("day").diff(start.startOf("day"), "day") === 0)
+    return "End date must be at least 1 day after start date.";
   if (start && end.isBefore(start))
     return "End date cannot be earlier than start date.";
-  if (start && end.diff(start, "day") < 1)
-    return "End date must be at least 1 day after start date.";
   if (end.isAfter(dayjs(), "day")) return "End date cannot be in the future.";
   return null;
 };

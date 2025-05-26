@@ -48,7 +48,7 @@ export const UserProfileBook = ({ book, deleteBook }: UserProfileBookProps) => {
           >
             {book.title}
           </NavLink>
-          <p className="font-extralight max-w-[300px] text-xs ">
+          <p className="font-extralight max-w-[300px] text-xs max-h-[100px] overflow-auto custom-scroll">
             {book.authors?.join(", ") || "Unknown Author"}
           </p>
           <p className="font-light text-xs ">
