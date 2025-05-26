@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from "../Sidebar/Sidebar";
 import { Search } from "../Search/Search";
 import { DarkmodeButton } from "../DarkmodeButton/DarkmodeButton";
@@ -11,12 +11,15 @@ import { CircularProgress } from "@mui/material";
 export const RootLayout = () => {
   const typing = false;
   const darkMode = false;
+  const location = useLocation();
 
   const dispatch = useAppDispatch();
   const loading = useSelector((state: RootState) => state.user.loading);
   useEffect(() => {
-    dispatch(fetchUserProfile());
-  }, [dispatch]);
+    if (location.pathname !== "/login") {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch, location.pathname]);
 
   return (
     <div className="relative min-h-screen">

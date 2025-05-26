@@ -1,6 +1,6 @@
 import axios from "axios";
 import { API_BASE_URL } from "../lib/constants";
-// import type { InternalAxiosRequestConfig } from "axios";
+import { UserService } from "./services/userService";
 
 export const booksApi = axios.create({
   baseURL: API_BASE_URL,
@@ -8,10 +8,18 @@ export const booksApi = axios.create({
   withCredentials: true,
 });
 
-// booksApi.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-//   const token = localStorage.getItem("token");
-//   if (token && config.headers) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+booksApi.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      try {
+        await UserService.logout();
+      } catch (logoutError) {
+        console.error("Logout API call failed:", logoutError);
+      }
+
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
