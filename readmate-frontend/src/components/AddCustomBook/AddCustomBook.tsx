@@ -20,11 +20,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "../Button/Button";
 import { Book } from "../../types/booktypes";
 import React, { useEffect, useState } from "react";
-import {
-  convertAndDisplayError,
-  toDateOrUndefined,
-  validateStartDate,
-} from "../../lib/utils";
+import { convertAndDisplayError, toDateOrUndefined } from "../../lib/utils";
 import { BookService } from "../../api/services/bookService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
