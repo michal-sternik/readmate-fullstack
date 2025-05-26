@@ -4,10 +4,12 @@ import registerImage from "../../assets/images/register.png";
 
 import { Button } from "../Button/Button";
 import { UserService } from "../../api/services/userService";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { fetchUserProfile } from "../../redux/userSlice";
 import { useAppDispatch } from "../../redux/store";
 import { convertAndDisplayError } from "../../lib/utils";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 export type LoginFormValues = {
   email: string;
@@ -20,6 +22,7 @@ const initialFormValues: LoginFormValues = {
 };
 
 export const LogIn = () => {
+  const location = useLocation();
   const form = useForm<LoginFormValues>({
     defaultValues: {
       ...initialFormValues,
@@ -36,6 +39,15 @@ export const LogIn = () => {
 
     formState: { errors },
   } = form;
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get("sessionExpired") === "1") {
+      toast.error("Session expired. Logging out...");
+
+      window.history.replaceState({}, document.title, "/login");
+    }
+  }, [location.search]);
 
   const onSubmit = async (data: LoginFormValues) => {
     try {

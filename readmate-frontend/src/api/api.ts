@@ -17,8 +17,7 @@ booksApi.interceptors.response.use(
       } catch (logoutError) {
         console.error("Logout API call failed:", logoutError);
       }
-
-      window.location.href = "/login";
+      window.location.href = "/login?sessionExpired=1";
     }
     return Promise.reject(error);
   }

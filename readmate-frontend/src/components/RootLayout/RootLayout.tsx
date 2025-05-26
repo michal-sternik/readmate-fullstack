@@ -16,7 +16,8 @@ export const RootLayout = () => {
   const dispatch = useAppDispatch();
   const loading = useSelector((state: RootState) => state.user.loading);
   useEffect(() => {
-    if (location.pathname !== "/login") {
+    const hasAuth = localStorage.getItem("isAuthenticated") === "true";
+    if (hasAuth) {
       dispatch(fetchUserProfile());
     }
   }, [dispatch, location.pathname]);
