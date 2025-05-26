@@ -13,7 +13,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { Checkbox } from "@mui/material";
 import { Book } from "../../types/booktypes";
 import { BookService } from "../../api/services/bookService";
-import { convertAndDisplayError, formatFullDate } from "../../lib/utils";
+import {
+  convertAndDisplayError,
+  formatFullDate,
+  validateEndDate,
+  validateStartDate,
+} from "../../lib/utils";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast } from "react-toastify";
@@ -50,6 +55,10 @@ export const SingleBookDetails = () => {
   //it'll be true if the user is currently reading the book, so only dateTo mattern
   const [currentlyReading, setCurrentlyReading] = useState<boolean>(!dateTo);
   const user = useSelector((state: RootState) => state.user.user);
+
+  const authorDisplay = authors?.length ? authors.join(", ") : "Unknown Author";
+  const categoryDisplay =
+    categories && categories.length > 0 ? categories.join(", ") : "Other";
 
   if (!state?.book) {
     return <div>No book data available.</div>;
@@ -110,47 +119,37 @@ export const SingleBookDetails = () => {
   };
 
   const handleDateFromChange = (newValue: Dayjs | null) => {
+    if (!newValue || !newValue.isValid()) {
+      setDateFromError("Invalid date. Please enter a valid date.");
+      setDateFrom(null);
+      return;
+    }
     setDateFrom(newValue);
 
-    if (!newValue) {
-      setDateFromError("Start date cannot be empty.");
-    } else if (newValue.isAfter(dayjs(), "day")) {
-      setDateFromError("Start date cannot be in the future.");
-    } else {
-      setDateFromError(null);
-    }
-
-    if (dateTo && newValue && dayjs(dateTo).isBefore(dayjs(newValue))) {
-      setDateToError("End date cannot be earlier than start date.");
-    } else if (dateTo && dateTo.isAfter(dayjs(), "day")) {
-      setDateToError("End date cannot be in the future.");
-    } else {
-      setDateToError(null);
-    }
+    setDateFromError(validateStartDate(newValue));
+    setDateToError(validateEndDate(dateTo, newValue));
   };
 
   const handleDateToChange = (newValue: Dayjs | null) => {
+    if (!newValue || !newValue.isValid()) {
+      setDateToError("Invalid date. Please enter a valid date.");
+      setDateTo(null);
+      return;
+    }
     setDateTo(newValue);
 
-    if (newValue && dateFrom && dayjs(newValue).isBefore(dayjs(dateFrom))) {
-      setDateToError("End date cannot be earlier than start date.");
-    } else if (newValue && newValue.isAfter(dayjs(), "day")) {
-      setDateToError("End date cannot be in the future.");
-    } else {
-      setDateToError(null);
-    }
+    setDateFromError(validateStartDate(dateFrom));
+    setDateToError(validateEndDate(newValue, dateFrom));
   };
   return (
     <>
-      <div className="flex flex-col-reverse overflow-auto xl:flex-row h-full min-h-130 w-full gap-10 lg:gap-5">
+      <div className="flex flex-col-reverse  xl:flex-row h-full min-h-130 w-full gap-10 lg:gap-5">
         <div className="flex flex-col w-full h-full xl:w-2/3 gap-3 xl:gap-5 justify-between ">
           <div className="flex flex-col w-full h-full gap-3">
             <div className="text-2xl text-[#A449FF] font-extrabold">
               {title}
             </div>
-            <div className="text-md text-[#A449FF] ">
-              {authors?.join(", ") ?? "Unknown Author"}
-            </div>
+            <div className="text-md text-[#A449FF] ">{authorDisplay}</div>
             <div className="flex xl:hidden flex-wrap flex-row gap-2 items-center justify-start ">
               <CustomChip
                 icon={<AutoStoriesIcon />}
@@ -166,10 +165,7 @@ export const SingleBookDetails = () => {
                     : "Date unknown"
                 }
               />
-              <CustomChip
-                icon={<CategoryIcon />}
-                label={`${categories?.join(",") ?? "No categories"}`}
-              />
+              <CustomChip icon={<CategoryIcon />} label={categoryDisplay} />
             </div>
             <div className="hidden xl:inline text-xl text-[#A449FF]">
               Description:
@@ -256,13 +252,31 @@ export const SingleBookDetails = () => {
         <div className="flex items-center gap-5 flex-row-reverse xl:flex-col xl:grow lg:justify-end xl:justify-between max-h-40 xl:max-h-full">
           <div className="flex flex-col gap-2 xl:gap-5 w-full h-full xl:h-auto">
             <div className="flex w-full">
-              <a href={link} className="w-full">
-                <CustomChip
-                  icon={<OpenInNewIcon />}
-                  label={`Open in browser`}
+              {link ? (
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-full"
-                />
-              </a>
+                >
+                  <CustomChip
+                    icon={<OpenInNewIcon />}
+                    label="Open in browser"
+                    className="w-full"
+                  />
+                </a>
+              ) : (
+                <button
+                  disabled
+                  className="w-full cursor-not-allowed opacity-50"
+                >
+                  <CustomChip
+                    icon={<OpenInNewIcon />}
+                    label="Open in browser"
+                    className="w-full"
+                  />
+                </button>
+              )}
             </div>
             <div className="xl:hidden text-2xl text-[#A449FF]">
               Description:
@@ -286,10 +300,7 @@ export const SingleBookDetails = () => {
                     : "Date unknown"
                 }
               />
-              <CustomChip
-                icon={<CategoryIcon />}
-                label={`${categories?.join(",") ?? "No categories"}`}
-              />
+              <CustomChip icon={<CategoryIcon />} label={categoryDisplay} />
             </div>
           </div>
 

@@ -31,14 +31,15 @@ const ProgressBar = ({
           </div>
 
           <div
-            className="absolute self-center top-1 z-10 bottom-full left-1/2 -translate-x-1/2 mb-2 
-                  bg-black text-white text-xs px-2 py-1 rounded-md shadow-md 
-                  whitespace-nowrap opacity-0 pointer-events-none 
-                  group-hover:opacity-100 group-focus:opacity-100 
-                  group-hover:pointer-events-auto group-focus:pointer-events-auto 
-                  transition duration-200"
+            className="absolute top-1 px-2 py-1 z-10 left-1/2 -translate-x-1/2 
+                        bg-black text-white text-xs rounded-md shadow-md 
+                        max-w-[90vw] w-max break-words text-center
+                        opacity-0 pointer-events-none
+                        group-hover:opacity-100 group-focus:opacity-100 
+                        group-hover:pointer-events-auto group-focus:pointer-events-auto 
+                        transition duration-200"
           >
-            Books without end date - currently reading - are not counted in.
+            Books without end date – currently reading – are not counted in.
           </div>
         </div>
       </div>

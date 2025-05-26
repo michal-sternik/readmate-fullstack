@@ -11,6 +11,7 @@ import { EditReadDatesDto } from './dtos/editreaddates.dto';
 import axios from 'axios';
 import { ExploreBookDto } from './dtos/explorebook.dto';
 import { GoogleBooksItem } from './types/googlebook.type';
+import { DatesError } from 'src/exceptions/exceptions';
 
 const MINUTES_PER_PAGE = 2; //average world reading speed
 
@@ -26,6 +27,13 @@ export class BookService {
     let book = await this.bookRepo.findOne({
       where: { title: createBookDto.title },
     });
+
+    if (
+      createBookDto.endDate &&
+      dayjs(createBookDto.endDate).isBefore(dayjs(createBookDto.startDate))
+    ) {
+      throw new DatesError();
+    }
 
     if (!book) {
       book = this.bookRepo.create({
@@ -63,6 +71,13 @@ export class BookService {
     editedBookId: string,
     editedBookDto: EditReadDatesDto,
   ) {
+    if (
+      editedBookDto.endDate &&
+      dayjs(editedBookDto.endDate).isBefore(dayjs(editedBookDto.startDate))
+    ) {
+      throw new DatesError();
+    }
+
     const userBook = await this.userBookService.findUserBookById(
       id,
       editedBookId,

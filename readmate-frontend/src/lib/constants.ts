@@ -1,6 +1,7 @@
 export const WEEKSPLIT = 14;
 export const WEEKDURATION = 7;
-export const API_BASE_URL = "/api";
+// export const API_BASE_URL = "/api";
+export const API_BASE_URL = "https://readmate.me/api";
 export const MAX_RESULTS_PER_EXPLORE_PAGE = 9;
 export const MAX_RESULTS_PER_USER_PAGE = 6;
 
