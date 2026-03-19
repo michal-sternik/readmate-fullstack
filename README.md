@@ -3,7 +3,7 @@
 **Built with React + NestJS + PostgreSQL (TypeScript)**
 
 This is a fullstack application which allows user to browse throught Google Books API books, and then store them in private "bookshelves". It provides plesant UI with statistics and calendar screen to display the data in user friendly format.
-<br><br> **Link**: **https://readmate.me**
+
 
 
 ## Features
